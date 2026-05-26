@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from re import sub
+from re import sub, match, IGNORECASE
 
 class Field:
     def __init__(self, value):
@@ -47,14 +47,16 @@ class Phone(Field):
         return len(self._get_num()) < Phone.NUM_LEN
 
 class Email(Field):
+    PATTERN = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     def __init__(self, value):
-        is_valid = self._validate_email(value)
+        is_valid = self.validate(value)
         if not is_valid:
             raise ValueError("Incorrect email")
         super().__init__(value)
 
-    def _validate_email(email: str) -> bool:
-        pass
+    def validate(self, email: str) -> bool:
+        return match(Email.PATTERN, email, IGNORECASE)
+    
 
 class Address(Field):
     def __init__(self, value):
