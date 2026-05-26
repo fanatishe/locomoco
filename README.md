@@ -19,7 +19,7 @@ locomoco/
     │   ├── parser.py          # parse_input
     │   ├── decorators.py      # input_error, unexpected_exit
     │   ├── handlers.py        # хендлери команд
-    │   └── repl.py            # головний цикл
+    │   └── runner.py            # головний цикл
     └── utils/
         ├── paths.py           # get_path
         └── mock.py            # seed-дані
