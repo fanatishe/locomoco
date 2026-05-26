@@ -1,10 +1,11 @@
 from ..domain import AddressBook
 from .decorators import unexpected_exit
 from .parser import parse_input
+from .welcome import welcome
 
 @unexpected_exit
 def run(book: AddressBook) -> None:
-    print("Welcome to the assistant bot!")
+    welcome()
     while True:
         user_input = input("Enter a command: ")
         command, *args = parse_input(user_input)
