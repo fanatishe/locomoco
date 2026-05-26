@@ -1,6 +1,5 @@
-def main():
-    pass
+from assistant.cli.interface import run_cli
 
 
 if __name__ == "__main__":
-    main()
+    run_cli()
