@@ -20,6 +20,15 @@ class Record:
     def add_email(self, email: str):
         self.emails.append(Email(email))
 
+    def to_dict(self) -> dict:
+        """Return all contact fields as a display-ready dict for formatters."""
+        return {
+            "Name": str(self.name),
+            "Phones": ", ".join(str(p) for p in self.phones) or "-",
+            "Address": str(self.address) if self.address else "-",
+            "Emails": ", ".join(str(e) for e in self.emails) or "-",
+        }
+
     def __str__(self):
         phones = "; ".join(p.value for p in self.phones)
         return f"{self.name.value}: {phones}"
