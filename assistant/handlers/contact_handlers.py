@@ -2,15 +2,6 @@ from assistant.contacts.record import Record
 from assistant.utils.decorators import input_error
 from assistant.utils.table_printer import format_contact, format_contacts_table
 from assistant.contacts.address_book import AddressBook
-from assistant.utils.exceptions import ContactNotFoundError
-from assistant.contacts.address_book import AddressBook
-
-
-def _get_record(name, book: AddressBook) -> Record:
-    record = book.find(name)
-    if record is None:
-        raise ContactNotFoundError(f"Contact '{name}' not found.")
-    return record
 
 
 @input_error
@@ -42,9 +33,31 @@ def set_address(args, book: AddressBook):
     name, *parts = args
     if not parts:
         raise ValueError("Address cannot be empty.")
-    record = _get_record(name, book)
+
+    record = book.find(name)
+
+    if record is None:
+        record = Record(name)
+        book.add_record(record)
+
     record.set_address(" ".join(parts))
     return "Address updated."
+
+
+@input_error
+def set_note(args, book: AddressBook):
+    name, *parts = args
+    if not parts:
+        raise ValueError("Note cannot be empty.")
+
+    record = book.find(name)
+
+    if record is None:
+        record = Record(name)
+        book.add_record(record)
+
+    record.set_note(" ".join(parts))
+    return "Note updated."
 
 
 @input_error
@@ -52,7 +65,13 @@ def add_email(args, book: AddressBook):
     if len(args) != 2:
         raise ValueError("Usage: add-email <name> <email>")
     name, email = args
-    record = _get_record(name, book)
+
+    record = book.find(name)
+
+    if record is None:
+        record = Record(name)
+        book.add_record(record)
+
     record.add_email(email)
     return "Email added."
 
