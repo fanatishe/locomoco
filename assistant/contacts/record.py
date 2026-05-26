@@ -30,5 +30,5 @@ class Record:
         }
 
     def __str__(self):
-        phones = "; ".join(str(p) for p in self.phones)
+        phones = "; ".join(p.value for p in self.phones)
         return f"{self.name.value}: {phones}"
