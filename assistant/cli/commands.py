@@ -77,6 +77,7 @@ COMMANDS = {
     "exit": "exit",
     "close": "exit",
     "hello": lambda *_: "How can I help you?",
+    "all": contact_search,
     "contact": {
         "/": help_contact,
         "add": contact_add,
