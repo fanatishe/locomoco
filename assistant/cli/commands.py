@@ -1,14 +1,9 @@
 from assistant.handlers.contact_handlers import (
-    add_contact,
-    add_email,
-    set_address,
-    show_all,
-    show_contact,
-    set_note,
     contact_add,
     contact_change,
     contact_delete,
     contact_search,
+    contact_search_name,
     contact_phone_add,
     contact_phone_change,
     contact_phone_delete,
@@ -79,22 +74,18 @@ from assistant.handlers.help_handlers import (
 
 
 COMMANDS = {
-    "add": add_contact,
-    "contact": show_contact,
-    "add-email": add_email,
-    "set-address": set_address,
-    "set-note": set_note,
-    "all": show_all,
-    ## New format
     "exit": "exit",
     "close": "exit",
     "hello": lambda *_: "How can I help you?",
-    "contacts": {
+    "contact": {
         "/": help_contact,
         "add": contact_add,
         "change": contact_change,
         "delete": contact_delete,
-        "search": contact_search,
+        "search": {
+            "/": contact_search,
+            "name": contact_search_name,
+        },
         "phone": {
             "/": help_contact_phone,
             "add": contact_phone_add,
