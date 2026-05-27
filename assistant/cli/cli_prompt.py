@@ -13,6 +13,7 @@ commands_list = [
     "contact change",
     "contact delete",
     "contact search",
+    "contact search name",
     "contact phone",
     "contact phone add",
     "contact phone change",
