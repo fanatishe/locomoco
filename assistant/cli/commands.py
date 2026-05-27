@@ -86,6 +86,9 @@ COMMANDS = {
     "set-note": set_note,
     "all": show_all,
     ## New format
+    "exit": "exit",
+    "close": "exit",
+    "hello": lambda *_: "How can I help you?",
     "contacts": {
         "/": help_contact,
         "add": contact_add,
