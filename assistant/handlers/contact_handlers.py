@@ -81,3 +81,83 @@ def show_all(args, book: AddressBook) -> str:
     if not book.data:
         return "No contacts."
     return format_contacts_table(list(book.data.values()))
+
+
+def contact_add():
+    print("Command 'contact_add' TO BE IMPLEMENTED")
+
+
+def contact_change():
+    print("Command 'contact_change' TO BE IMPLEMENTED")
+
+
+def contact_delete():
+    print("Command 'contact_delete' TO BE IMPLEMENTED")
+
+
+def contact_search():
+    print("Command 'contact_search' TO BE IMPLEMENTED")
+
+
+def contact_phone_add():
+    print("Command 'contact_phone_add' TO BE IMPLEMENTED")
+
+
+def contact_phone_change():
+    print("Command 'contact_phone_change' TO BE IMPLEMENTED")
+
+
+def contact_phone_delete():
+    print("Command 'contact_phone_delete' TO BE IMPLEMENTED")
+
+
+def contact_phone_search():
+    print("Command 'contact_phone_search' TO BE IMPLEMENTED")
+
+
+def contact_email_add():
+    print("Command 'contact_email_add' TO BE IMPLEMENTED")
+
+
+def contact_email_change():
+    print("Command 'contact_email_change' TO BE IMPLEMENTED")
+
+
+def contact_email_delete():
+    print("Command 'contact_email_delete' TO BE IMPLEMENTED")
+
+
+def contact_email_search():
+    print("Command 'contact_email_search' TO BE IMPLEMENTED")
+
+
+def contact_birthday_set():
+    print("Command 'contact_birthday_set' TO BE IMPLEMENTED")
+
+
+def contact_birthday_change():
+    print("Command 'contact_birthday_change' TO BE IMPLEMENTED")
+
+
+def contact_birthday_delete():
+    print("Command 'contact_birthday_delete' TO BE IMPLEMENTED")
+
+
+def contact_birthday_search():
+    print("Command 'contact_birthday_search' TO BE IMPLEMENTED")
+
+
+def contact_address_set():
+    print("Command 'contact_address_set' TO BE IMPLEMENTED")
+
+
+def contact_address_change():
+    print("Command 'contact_ddress_change' TO BE IMPLEMENTED")
+
+
+def contact_address_delete():
+    print("Command 'contact_address_delete' TO BE IMPLEMENTED")
+
+
+def contact_address_search():
+    print("Command 'contact_address_search' TO BE IMPLEMENTED")
