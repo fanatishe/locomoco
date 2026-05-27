@@ -1,16 +1,17 @@
 from assistant.cli.parser import parse_input
 from assistant.cli.commands import COMMANDS
 from assistant.storage.pickle_storage import load_data, save_data
+from assistant.cli.cli_prompt import get_user_input
+from assistant.utils.welcome_message import generate_jarvis_interface
 
 
 def run_cli():
+    generate_jarvis_interface()
     book = load_data()
-
-    print("Welcome to assistant bot!")
 
     try:
         while True:
-            user_input = input("Enter a command: ")
+            user_input = get_user_input()
 
             command, args = parse_input(user_input)
 
