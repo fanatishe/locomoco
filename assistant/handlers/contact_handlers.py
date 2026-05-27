@@ -6,7 +6,10 @@ from assistant.contacts.address_book import AddressBook
 
 @input_error
 def contact_add(args, book):
-    name, phone = args
+    try:
+        name, phone, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and phone please")
 
     record = book.find(name)
 
@@ -36,7 +39,11 @@ def contact_search(args, book: AddressBook) -> str:
 
 @input_error
 def contact_search_name(args, book: AddressBook) -> str:
-    (name,) = args
+    try:
+        name, *_ = args
+    except ValueError:
+        raise ValueError("Give me name please")
+
     record = book.find(name)
     if record is None:
         raise ValueError(f"Contact '{name}' not found.")
@@ -62,9 +69,10 @@ def contact_phone_search(args, book: AddressBook) -> str:
 
 @input_error
 def contact_email_add(args, book: AddressBook):
-    if len(args) != 2:
-        raise ValueError("Usage: add-email <name> <email>")
-    name, email = args
+    try:
+        name, email, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and email please")
 
     record = book.find(name)
 
@@ -106,9 +114,10 @@ def contact_birthday_search(*args):
 
 @input_error
 def contact_address_set(args, book: AddressBook):
-    name, *parts = args
-    if not parts:
-        raise ValueError("Address cannot be empty.")
+    try:
+        name, *parts = args
+    except ValueError:
+        raise ValueError("Give me name and address please")
 
     record = book.find(name)
 
