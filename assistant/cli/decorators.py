@@ -1,4 +1,5 @@
 from functools import wraps
+from assistant.utils.messages import good_bye
 
 
 def input_error(func):
@@ -24,6 +25,6 @@ def unexpected_exit(func):
         try:
             return func(*args, **kwargs)
         except KeyboardInterrupt:
-            print("\nGood bye!")
+            good_bye()
 
     return wrapper

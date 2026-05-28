@@ -71,11 +71,16 @@ from assistant.handlers.help_handlers import (
     help_note_tag_delete,
     help_note_tag_search,
 )
+from assistant.cli.exceptions import GoodByeException
+
+
+def good_bye(*args):
+    raise GoodByeException()
 
 
 COMMANDS = {
-    "exit": "exit",
-    "close": "exit",
+    "exit": good_bye,
+    "close": good_bye,
     "hello": lambda *_: "How can I help you?",
     "all": contact_search,
     "contact": {

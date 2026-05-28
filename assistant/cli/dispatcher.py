@@ -14,7 +14,7 @@ def dispatch(command_parts: list[str], commands=None) -> tuple:
         if callable(commands[command]):
             return (commands[command], command_parts[1:])
         elif isinstance(commands[command], str):
-            return (command, [])
+            return (commands[command], [])
         elif isinstance(commands[command], dict):
             return dispatch(command_parts[1:], commands[command])
 

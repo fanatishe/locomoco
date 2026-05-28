@@ -1,0 +1,2 @@
+class GoodByeException(Exception):
+    pass
