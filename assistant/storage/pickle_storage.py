@@ -1,6 +1,7 @@
 from assistant.contacts.address_book import AddressBook
 from pathlib import Path
 import pickle
+import os
 
 
 def save_data(book, filename_str: str = "addressbook.pkl") -> None:
@@ -18,6 +19,8 @@ def load_data(filename_str: str = "addressbook.pkl") -> AddressBook:
     Якщо файлу немає — створює нову книгу.
     """
     try:
+        if not (Path(__file__).parent.parent / "data").exists():
+            os.mkdir(Path(__file__).parent.parent / "data")
         filename = Path(__file__).parent.parent / "data" / filename_str
         with open(filename, "rb") as f:
             return pickle.load(f)
