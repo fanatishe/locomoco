@@ -3,6 +3,7 @@ from assistant.contacts.email import Email
 from assistant.contacts.name import Name
 from assistant.contacts.phone import Phone
 from assistant.contacts.note import Note
+from assistant.contacts.birthday import Birthday
 from assistant.utils.formatters import format_address, format_emails, format_name, format_phones
 
 
@@ -13,6 +14,7 @@ class Record:
         self.address = None
         self.emails = []
         self.note = None
+        self.birthday = None
 
     def add_phone(self, phone: str):
         self.phones.append(Phone(phone))
@@ -25,6 +27,10 @@ class Record:
 
     def add_email(self, email: str):
         self.emails.append(Email(email))
+
+    def add_birthday(self, value) -> Record:
+        self.birthday = Birthday(value)
+        return self
 
     def to_dict(self) -> dict:
         """Return all contact fields as a display-ready dict for formatters."""
