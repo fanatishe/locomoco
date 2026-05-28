@@ -1,33 +1,27 @@
-from assistant.contacts.address_book import AddressBook
-
 from assistant.cli.parser import parse_input
-from assistant.cli.commands import COMMANDS
+from assistant.storage.pickle_storage import load_data, save_data
+from assistant.cli.cli_prompt import get_user_input
+from assistant.utils.welcome_message import generate_jarvis_interface
+from assistant.cli.dispatcher import dispatch
 
 
 def run_cli():
-    book = AddressBook()
+    generate_jarvis_interface()
+    book = load_data()
 
-    print("Welcome to assistant bot!")
+    try:
+        while True:
+            user_input = get_user_input()
 
-    while True:
-        user_input = input("Enter a command: ")
+            command_parts = parse_input(user_input)
+            handler, args = dispatch(command_parts)
 
-        command, args = parse_input(user_input)
+            if handler in ["close", "exit"]:
+                print("Good bye!")
+                break
 
-        if command in ["close", "exit"]:
-            print("Good bye!")
-            break
+            result = handler(args, book)
 
-        if command == "hello":
-            print("How can I help you?")
-            continue
-
-        handler = COMMANDS.get(command)
-
-        if handler is None:
-            print("Invalid command.")
-            continue
-
-        result = handler(args, book)
-
-        print(result)
+            print(result)
+    finally:
+        save_data(book)
