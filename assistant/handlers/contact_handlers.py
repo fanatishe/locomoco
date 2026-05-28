@@ -62,3 +62,7 @@ def show_all(args, book: AddressBook) -> str:
     if not book.data:
         return "No contacts."
     return format_contacts_table(list(book.data.values()))
+
+@input_error
+def search(query: str, book: AddressBook) -> Record:
+    return book.find(query)
