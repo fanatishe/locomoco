@@ -8,6 +8,7 @@ commands_list = [
     "exit",
     "close",
     "hello",
+    "all",
     "contact",
     "contact add",
     "contact change",
