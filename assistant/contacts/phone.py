@@ -13,13 +13,15 @@ class Phone(Field):
             raise ValueError("Incorrect phone format")
 
         formated_phone = self.format(phone)
+        self.phone = phone
         super().__init__(formated_phone)
 
-    def _get_num(self, phone: str) -> str:
+    @staticmethod
+    def get_num(phone: str) -> str:
         return sub(Phone.NUM_PATTERN, "", phone)
 
     def format(self, phone: str) -> str:
-        number = self._get_num(phone)
+        number = Phone.get_num(phone)
         without_code = number[-10:]
         operator_code = without_code[0:3]
 
@@ -30,4 +32,4 @@ class Phone(Field):
         return f"{Phone.COUNTRY_CODE} ({operator_code}) {part_1}-{part_2}-{part_3}"
 
     def validate(self, phone: str) -> bool:
-        return len(self._get_num(phone)) == Phone.NUM_LEN
+        return len(Phone.get_num(phone)) == Phone.NUM_LEN
