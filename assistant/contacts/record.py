@@ -3,6 +3,7 @@ from assistant.contacts.email import Email
 from assistant.contacts.name import Name
 from assistant.contacts.phone import Phone
 from assistant.contacts.note import Note
+from assistant.utils.formatters import format_address, format_emails, format_name, format_phones
 
 
 class Record:
@@ -28,13 +29,13 @@ class Record:
     def to_dict(self) -> dict:
         """Return all contact fields as a display-ready dict for formatters."""
         return {
-            "Name": str(self.name),
-            "Phones": ", ".join(str(p) for p in self.phones) or "-",
-            "Address": str(self.address) if self.address else "-",
-            "Emails": ", ".join(str(e) for e in self.emails) or "-",
+            "Name": format_name(self.name),
+            "Phones": format_phones(self.phones),
+            "Address": format_address(self.address),
+            "Emails": format_emails(self.emails),
             "Note": str(self.note) if self.note else "-",
         }
 
     def __str__(self):
-        phones = "; ".join(p.value for p in self.phones)
+        phones = "; ".join(str(p) for p in self.phones)
         return f"{self.name.value}: {phones}"

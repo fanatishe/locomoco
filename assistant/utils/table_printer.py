@@ -1,4 +1,9 @@
+from rich.table import Table
+from rich.console import Console
+from io import StringIO
+
 from assistant.contacts.record import Record
+from assistant.utils.formatters import COLUMN_STYLES
 
 
 def format_contact(record: Record) -> str:
@@ -7,21 +12,19 @@ def format_contact(record: Record) -> str:
 
 
 def format_contacts_table(records: list[Record]) -> str:
-    """Multiple contacts — ASCII table."""
-    rows = [record.to_dict() for record in records]
-    headers = list(rows[0].keys())
+    """Multiple contacts — styled table via rich library."""
+    headers = list(records[0].to_dict().keys())
 
-    widths = {h: len(h) for h in headers}
-    for row in rows:
-        for h in headers:
-            widths[h] = max(widths[h], len(row[h]))
+    table = Table(title="Contacts", show_lines=True)
+    for h in headers:
+        table.add_column(h, style=COLUMN_STYLES.get(h, ""))
 
-    sep = "+" + "+".join("-" * (widths[h] + 2) for h in headers) + "+"
-    header_row = "|" + "|".join(f" {h:<{widths[h]}} " for h in headers) + "|"
+    for record in records:
+        table.add_row(*record.to_dict().values())
 
-    lines = [sep, header_row, sep]
-    for row in rows:
-        lines.append("|" + "|".join(f" {row[h]:<{widths[h]}} " for h in headers) + "|")
-    lines.append(sep)
-
-    return "\n".join(lines)
+    # StringIO is an in-memory buffer that mimics a file.
+    # Console writes to it instead of stdout, so we can capture the output as a string.
+    # force_terminal=True tells rich to keep ANSI color codes even though it's not a real terminal.
+    buffer = StringIO()
+    Console(file=buffer, force_terminal=True).print(table)
+    return buffer.getvalue()
