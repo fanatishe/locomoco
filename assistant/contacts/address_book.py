@@ -1,6 +1,8 @@
 from collections import UserDict
 from .record import Record
 from .phone import Phone
+from .birthday import Birthday, ContactCongratulation
+from datetime import date, timedelta
 
 
 class AddressBook(UserDict[str, Record]):
@@ -37,3 +39,40 @@ class AddressBook(UserDict[str, Record]):
                     return record
                 
         return None
+
+    
+    def get_upcoming_birthdays(self, from_date = None, within=7) -> list[ContactCongratulation]:
+        weekdays = (5, 6) 
+        today_date = date.today()
+
+        if from_date is not None:
+            today_date = date.strptime(from_date, Birthday.DATE_FORMAT)
+        
+        current_year = today_date.year
+        bd_list = []
+        for name, record in self.data.items():
+            if record.birthday is None:
+                continue
+
+            birth_date = record.birthday.value
+            congrats_date = birth_date.replace(year = current_year)
+
+            if congrats_date < today_date:
+                congrats_date = congrats_date.replace(year = current_year + 1)
+
+            days_left = (congrats_date - today_date).days
+            
+            if days_left in [i for i in range(within)]:
+                weekday = congrats_date.weekday()
+                if weekday in weekdays:
+                    congrats_date = congrats_date + timedelta(days = 7 - weekday)
+
+                bd_list.append(ContactCongratulation(congrats_date.strftime(Birthday.DATE_FORMAT), name))   
+
+        return bd_list
+    
+    def show_upcoming_birthdays(self, from_date = None, within=7):
+        bd_list = self.get_upcoming_birthdays(from_date, within)
+        for bd in bd_list:
+            print(bd)
+
