@@ -91,10 +91,12 @@ def contact_phone_add(args, book: Book):
     except ValueError:
         raise ValueError("Give me name and phone number please")
 
-    if name not in book.addressbook.data:
-        raise KeyError()
+    record = book.addressbook.find(name)
 
-    record = book.addressbook.data[name]
+    if record is None:
+        record = Record(name)
+        book.addressbook.add_record(record)
+
     record.add_phone(phone)
     return f"Phone number '{phone}' added to contact {name}."
 
