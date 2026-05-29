@@ -1,30 +1,173 @@
-def note_add(*args):
-    return "Command 'note_add' TO BE IMPLEMENTED"
+from assistant.contacts.address_book import Book
+from assistant.utils.decorators import input_error
+from assistant.utils.table_printer import format_notes_table
 
 
-def note_change(*args):
-    return "Command 'note_change' TO BE IMPLEMENTED"
+@input_error
+def note_add(args, book: Book):
+    if not args:
+        raise ValueError("Give me note text please")
+
+    text = " ".join(args)
+    note_id = book.notebook.add_note(text)
+    return f"Note added with ID: {note_id}."
 
 
-def note_delete(*args):
-    return "Command 'note_delete' TO BE IMPLEMENTED"
+@input_error
+def note_change(args, book: Book):
+    try:
+        note_id = int(args[0])
+        text = " ".join(args[1:])
+    except (ValueError, IndexError):
+        raise ValueError("Give me note ID and new text please")
+
+    if note_id not in book.notebook.data:
+        return f"Note with ID {note_id} not found."
+
+    if not text:
+        raise ValueError("Note text cannot be empty")
+
+    book.notebook.data[note_id]["text"] = text
+    return f"Note {note_id} updated."
 
 
-def note_search(*args):
-    return "Command 'note_search' TO BE IMPLEMENTED"
+@input_error
+def note_delete(args, book: Book):
+    if not args:
+        raise ValueError("Give me note ID please")
+
+    try:
+        note_id = int(args[0])
+    except ValueError:
+        raise ValueError("Note ID must be an integer")
+
+    if note_id in book.notebook.data:
+        del book.notebook.data[note_id]
+        return f"Note {note_id} deleted."
+    return f"Note with ID {note_id} not found."
 
 
-def note_tag_add(*args):
-    return "Command 'note_tag_add' TO BE IMPLEMENTED"
+@input_error
+def note_search(args, book: Book):
+    if not book.notebook.data:
+        return "No notes found."
+
+    query = args[0].strip().lower() if (args and args[0].strip()) else None
+    results = []
+
+    for note_id, note_info in book.notebook.data.items():
+        if query is None or query in note_info["text"].lower():
+            results.append(
+                {"id": note_id, "text": note_info["text"], "tags": note_info["tags"]}
+            )
+
+    if not results and query:
+        return f"No notes found matching: '{args[0]}'"
+
+    return format_notes_table(results)
 
 
-def note_tag_change(*args):
-    return "Command 'note_tag_change' TO BE IMPLEMENTED"
+@input_error
+def note_tag_add(args, book: Book):
+    try:
+        note_id = int(args[0])
+        tag = args[1].lower()
+    except (ValueError, IndexError):
+        raise ValueError("Give me note ID and tag name please")
+
+    if note_id not in book.notebook.data:
+        return f"Note with ID {note_id} not found."
+
+    if tag not in book.notebook.data[note_id]["tags"]:
+        book.notebook.data[note_id]["tags"].append(tag)
+        return f"Tag '{tag}' added to note {note_id}."
+    return f"Tag '{tag}' already exists on note {note_id}."
 
 
-def note_tag_delete(*args):
-    return "Command 'note_tag_delete' TO BE IMPLEMENTED"
+@input_error
+def note_tag_change(args, book: Book):
+    try:
+        note_id = int(args[0])
+        old_tag = args[1].lower()
+        new_tag = args[2].lower()
+    except (ValueError, IndexError):
+        raise ValueError("Give me note ID, old tag, and new tag please")
+
+    if note_id not in book.notebook.data:
+        return f"Note with ID {note_id} not found."
+
+    tags = book.notebook.data[note_id]["tags"]
+    if old_tag in tags:
+        if new_tag not in tags:
+            tags[tags.index(old_tag)] = new_tag
+            return f"Tag '{old_tag}' changed to '{new_tag}' on note {note_id}."
+        else:
+            tags.remove(old_tag)
+            return f"Tag '{old_tag}' replaced by existing tag '{new_tag}' on note {note_id}."
+    return f"Tag '{old_tag}' not found on note {note_id}."
 
 
-def note_tag_search(*args):
-    return "Command 'note_tag_search' TO BE IMPLEMENTED"
+@input_error
+def note_tag_delete(args, book: Book):
+    try:
+        note_id = int(args[0])
+        tag = args[1].lower()
+    except (ValueError, IndexError):
+        raise ValueError("Give me note ID and tag name please")
+
+    if note_id not in book.notebook.data:
+        return f"Note with ID {note_id} not found."
+
+    if tag in book.notebook.data[note_id]["tags"]:
+        book.notebook.data[note_id]["tags"].remove(tag)
+        return f"Tag '{tag}' removed from note {note_id}."
+    return f"Tag '{tag}' not found on note {note_id}."
+
+
+@input_error
+def note_tag_search(args, book: Book):
+    if not args:
+        raise ValueError("Give me a tag name to search for please")
+
+    query_tag = args[0].lower()
+    results = []
+
+    for note_id, note_info in book.notebook.data.items():
+        if query_tag in note_info["tags"]:
+            results.append(
+                {"id": note_id, "text": note_info["text"], "tags": note_info["tags"]}
+            )
+
+    if not results:
+        return f"No notes found with tag: '{args[0]}'"
+
+    return format_notes_table(results)
+
+
+@input_error
+def note_tag_sort(args, book: Book) -> str:
+    """
+    Sorts all notes by their tags alphabetically.
+    Notes without tags are placed at the bottom of the list.
+
+    Args:
+        args (list[str]): Command arguments (none expected for this command).
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted string of sorted notes.
+    """
+    if not book.notebook.data:
+        return "No notes found."
+
+    notes_list = []
+    for note_id, note_info in book.notebook.data.items():
+        sorted_tags = sorted(note_info.get("tags", []))
+        notes_list.append(
+            {"id": note_id, "text": note_info["text"], "tags": sorted_tags}
+        )
+
+    # Sort by presence of tags first, then alphabetically by tags
+    notes_list.sort(key=lambda x: (0 if x["tags"] else 1, ", ".join(x["tags"])))
+
+    return format_notes_table(notes_list)
