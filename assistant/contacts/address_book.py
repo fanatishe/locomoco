@@ -1,78 +1,97 @@
 from collections import UserDict
+from datetime import datetime, timedelta
 from .record import Record
-from .phone import Phone
-from .birthday import Birthday, ContactCongratulation
-from datetime import date, timedelta
 
 
 class AddressBook(UserDict[str, Record]):
-    def add_record(self, record):
+    """
+    Stores and manages contact records. Inherits from UserDict, meaning
+    the actual contact data is stored in the `self.data` dictionary.
+    """
+
+    def add_record(self, record: Record) -> None:
+        """Adds a new Record to the address book using the contact's name as the key."""
         self.data[record.name.value] = record
 
-    def find(self, query: str):
-        query = query.lower()
-        # пошук по всім полям
-        for name, record in self.data.items():
-            # перевіряємо по імені
-            if query == name.lower():
-                return record
-            # приводимо запис до словника
-            for key, value in record.to_dict().items():
-                # по імені вже перевірили - пропускаємо
-                if key == "Name":
-                    continue
-                # якщо телефони
-                if key == "Phones":
-                    # якщо є одразу співпадіння - вертаємо запис
-                    if query in value:
-                        return record
-                    else:
-                        # якщо телефон частково введений, то все приводимо до рядка цифрами і дивимось чи є query підрядком phone
-                        for phone in value.split(","):
-                            query_as_number = Phone.get_num(query)
-                            if not len(query_as_number):
-                                continue
-                            if query_as_number in Phone.get_num(phone):
-                                return record
-                # по всіх інших полях перевіряємо співпадіння
-                if query in value.lower():
-                    return record
-                
-        return None
+    def find(self, name: str) -> Record | None:
+        """Retrieves a Record by name, returning None if not found."""
+        return self.data.get(name)
 
-    
-    def get_upcoming_birthdays(self, from_date = None, within=7) -> list[ContactCongratulation]:
-        weekdays = (5, 6) 
-        today_date = date.today()
+    def get_upcoming_birthdays(self, days: int) -> list[Record]:
+        """
+        Calculates which contacts have a birthday coming up within a specified number of days.
 
-        if from_date is not None:
-            today_date = date.strptime(from_date, Birthday.DATE_FORMAT)
-        
-        current_year = today_date.year
-        bd_list = []
-        for name, record in self.data.items():
-            if record.birthday is None:
+        Args:
+            days (int): The forward-looking time window in days.
+
+        Returns:
+            list[Record]: A list of records whose birthdays fall within the window.
+        """
+        upcoming = []
+        today = datetime.now().date()
+        target_date = today + timedelta(days=days)
+
+        for record in self.data.values():
+            if not record.birthday:
                 continue
 
-            birth_date = record.birthday.value
-            congrats_date = birth_date.replace(year = current_year)
+            # Extract day and month from the normalized string format DD.MM.YYYY
+            b_day, b_month, _ = map(int, record.birthday.value.split("."))
 
-            if congrats_date < today_date:
-                congrats_date = congrats_date.replace(year = current_year + 1)
+            # Formulate this year's birthday date
+            try:
+                birthday_this_year = datetime(today.year, b_month, b_day).date()
+            except ValueError:
+                # Handle leap year edge cases (e.g., Feb 29 in a non-leap year)
+                birthday_this_year = datetime(today.year, b_month, b_day - 1).date()
 
-            days_left = (congrats_date - today_date).days
-            
-            if days_left in [i for i in range(within)]:
-                weekday = congrats_date.weekday()
-                if weekday in weekdays:
-                    congrats_date = congrats_date + timedelta(days = 7 - weekday)
+            # If the birthday has already passed this year, look at next year
+            if birthday_this_year < today:
+                try:
+                    birthday_this_year = datetime(today.year + 1, b_month, b_day).date()
+                except ValueError:
+                    birthday_this_year = datetime(
+                        today.year + 1, b_month, b_day - 1
+                    ).date()
 
-                bd_list.append(ContactCongratulation(congrats_date.strftime(Birthday.DATE_FORMAT), name))   
+            # Check if the adjusted birthday falls within the requested time frame
+            if today <= birthday_this_year <= target_date:
+                upcoming.append(record)
 
-        return bd_list
-    
-    def show_upcoming_birthdays(self, from_date = None, within=7):
-        bd_list = self.get_upcoming_birthdays(from_date, within)
-        for bd in bd_list:
-            print(bd)
+        return upcoming
 
+
+class Notebook(UserDict):
+    """
+    Holds standalone text notes separate from contacts, utilizing an auto-incrementing ID.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.current_id = 1
+
+    def add_note(self, text: str) -> int:
+        """
+        Creates a new note with a unique integer ID.
+
+        Args:
+            text (str): The body text of the note.
+
+        Returns:
+            int: The unique identifier assigned to the note.
+        """
+        note_id = self.current_id
+        self.data[note_id] = {"text": text, "tags": []}
+        self.current_id += 1
+        return note_id
+
+
+class Book:
+    """
+    The root application state object unifying both sub-stores (AddressBook and Notebook).
+    This single object is what gets pickled and saved to the hard drive.
+    """
+
+    def __init__(self):
+        self.addressbook = AddressBook()
+        self.notebook = Notebook()

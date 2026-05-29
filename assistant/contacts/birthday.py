@@ -1,24 +1,21 @@
-from .field import Field
 from datetime import date
-class Birthday(Field):
-    DATE_FORMAT = "%d.%m.%Y"
-    def __init__(self, value):
-        try:
-            value = date.strptime(value, Birthday.DATE_FORMAT)
-            super().__init__(value)
-        except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
-    
-    def _format_date(self, date: date):
-        return date.strftime(Birthday.DATE_FORMAT)
-    
-    def __str__(self):
-        return f"{self._format_date(self.value)}"
-    
-class ContactCongratulation(Birthday):
-    def __init__(self, value, name):
-        super().__init__(value)
-        self.name = name
+from assistant.contacts.field import Field
+from assistant.utils.birthday_utils import normalize_date
 
-    def __str__(self):
-        return f"On {self.value} congratulate {self.name} "
+
+class Birthday(Field):
+    """Represents a contact's birthday. Validates that the date is not in the future."""
+
+    def __init__(self, value: str):
+        normalized_value = self.validate_and_normalize(value)
+        super().__init__(normalized_value)
+
+    def validate_and_normalize(self, value: str) -> str:
+        # normalize_date returns a datetime object.
+        normalized_datetime = normalize_date(value)
+
+        # We must extract the date() part before comparing it to date.today()
+        if normalized_datetime.date() > date.today():
+            raise ValueError("Birthday cannot be in the future.")
+
+        return normalized_datetime.strftime("%d.%m.%Y")
