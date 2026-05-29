@@ -1,5 +1,15 @@
-def note_add(*args):
-    return "Command 'note_add' TO BE IMPLEMENTED"
+from assistant.contacts.address_book import Book
+from assistant.utils.decorators import input_error
+
+
+@input_error
+def note_add(args, book: Book):
+    if not args:
+        return "Please provide content for the note."
+
+    note_text = " ".join(args)
+    note_id = book.notebook.add_note(note_text)
+    return f"Note #{note_id} added successfully to your separate notebook!"
 
 
 def note_change(*args):
