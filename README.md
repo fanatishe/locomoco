@@ -44,6 +44,33 @@ python main.py
 
 Once the application starts, you can type commands to interact with the assistant. Press `TAB` or the `RIGHT ARROW` key to auto-complete commands.
 
+## 🤖 Automated / Batch Processing (E2E Testing)
+
+The assistant supports non-interactive execution, allowing you to feed a sequence of commands from a text file or via command-line pipes. This is highly useful for automated End-to-End (E2E) testing or batch inserting data.
+
+In this mode, all visual UI elements (like the boot animation and interactive auto-complete) are automatically suppressed to provide a clean, readable standard output.
+
+### 1. Running from a File
+You can write a list of commands in a text file (e.g., `commands.txt`):
+`text
+help
+contact add Alice 0501234567
+contact add Bob 0671234567
+all
+exit
+`
+
+Then, feed the file into the application using input redirection:
+`bash
+python main.py < commands.txt
+`
+
+### 2. Running via Pipe
+You can also pipe single or multiple commands directly into the assistant from your terminal:
+`bash
+echo "contact search Alice" | python main.py
+`
+
 ## Command Reference
 
 ### General
