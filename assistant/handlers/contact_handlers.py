@@ -1,5 +1,5 @@
 from assistant.contacts.record import Record
-from assistant.utils.decorators import input_error
+from assistant.cli.decorators import input_error
 from assistant.utils.table_printer import format_contacts_table
 from assistant.contacts.address_book import Book
 from assistant.contacts.phone import Phone
@@ -43,9 +43,10 @@ def contact_change(args, book: Book):
     if new_name in book.addressbook.data:
         raise ValueError(f"Contact with the name '{new_name}' already exists.")
 
-    record = book.addressbook.data.pop(old_name)
+    record = book.addressbook.data[old_name]
     record.name = Name(new_name)
     book.addressbook.data[new_name] = record
+    del book.addressbook.data[old_name]
 
     return f"Contact name updated from '{old_name}' to '{new_name}'."
 
@@ -75,11 +76,33 @@ def contact_search(args, book: Book) -> str:
     matched_records = []
 
     for name, record in book.addressbook.data.items():
+        # Check Name
         if query in name.lower():
             matched_records.append(record)
+            continue
+
+        # Check Phones
+        if any(query in phone.value for phone in record.phones):
+            matched_records.append(record)
+            continue
+
+        # Check Emails
+        if any(query in email.value.lower() for email in record.emails):
+            matched_records.append(record)
+            continue
+
+        # Check Address
+        if record.address and query in record.address.value.lower():
+            matched_records.append(record)
+            continue
+
+        # Check Birthday
+        if record.birthday and query in str(record.birthday.value).lower():
+            matched_records.append(record)
+            continue
 
     if not matched_records:
-        return f"No contacts found matching username: '{args[0]}'"
+        return f"No contacts found matching query: '{args[0]}'"
 
     return format_contacts_table(matched_records)
 
@@ -350,6 +373,7 @@ def show_all(args, book: Book) -> str:
     return format_contacts_table(list(book.addressbook.data.values()))
 
 
+@input_error
 def contact_address_set(args, book: Book):
     try:
         name, *parts = args
