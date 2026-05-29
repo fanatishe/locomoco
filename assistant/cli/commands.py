@@ -127,7 +127,7 @@ commands_list = {
     "note tag add": (note_tag_add, 2),
     "note tag change": (note_tag_change, 2),
     "note tag delete": (note_tag_delete, 1),
-    "note tag search": (note_tag_search, 1),
+    "note tag search": (note_tag_search, 0),
     "note tag sort": (note_tag_sort, 0),
     "help": (help_default, 0),
     "help contact": (help_contact, 0),

@@ -126,22 +126,42 @@ def note_tag_delete(args, book: Book):
 
 @input_error
 def note_tag_search(args, book: Book):
-    if not args:
-        raise ValueError("Give me a tag name to search for please")
+    """
+    Searches for notes containing a specific tag (partial match).
+    If no tag is provided, displays a list of all unique tags currently in use.
+    """
+    # CASE 1: No arguments provided -> Show all unique tags
+    if not args or not args[0].strip():
+        if not book.notebook.data:
+            return "No notes found."
 
+        all_tags = set()
+        for note_info in book.notebook.data.values():
+            # .update() adds multiple items to a set, ignoring duplicates automatically
+            all_tags.update(note_info.get("tags", []))
+
+        if not all_tags:
+            return "No tags have been created yet."
+
+        # Format the unique tags into a clean bulleted list
+        sorted_tags = sorted(list(all_tags))
+        formatted_list = "\n".join(f"  • {tag}" for tag in sorted_tags)
+        return f"\nAvailable tags:\n{formatted_list}\n"
+
+    # CASE 2: Argument provided -> Search notes by partial tag match
     query_tag = args[0].lower()
-    results = []
+    matched_notes = []
 
     for note_id, note_info in book.notebook.data.items():
-        if query_tag in note_info["tags"]:
-            results.append(
+        if any(query_tag in tag for tag in note_info.get("tags", [])):
+            matched_notes.append(
                 {"id": note_id, "text": note_info["text"], "tags": note_info["tags"]}
             )
 
-    if not results:
-        return f"No notes found with tag: '{args[0]}'"
+    if not matched_notes:
+        return f"No notes found with tag containing: '{args[0]}'"
 
-    return format_notes_table(results)
+    return format_notes_table(matched_notes)
 
 
 @input_error
