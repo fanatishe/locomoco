@@ -30,6 +30,7 @@ from assistant.handlers.note_handlers import (
     note_tag_change,
     note_tag_delete,
     note_tag_search,
+    note_tag_sort,
 )
 
 from assistant.handlers.help_handlers import (
@@ -69,6 +70,7 @@ from assistant.handlers.help_handlers import (
     help_note_tag_change,
     help_note_tag_delete,
     help_note_tag_search,
+    help_note_tag_sort,
 )
 from assistant.cli.exceptions import GoodByeException
 
@@ -126,6 +128,7 @@ commands_list = {
     "note tag change": (note_tag_change, 2),
     "note tag delete": (note_tag_delete, 1),
     "note tag search": (note_tag_search, 1),
+    "note tag sort": (note_tag_sort, 0),
     "help": (help_default, 0),
     "help contact": (help_contact, 0),
     "help contact add": (help_contact_add, 0),
@@ -162,4 +165,5 @@ commands_list = {
     "help note tag change": (help_note_tag_change, 0),
     "help note tag delete": (help_note_tag_delete, 0),
     "help note tag search": (help_note_tag_search, 0),
+    "help note tag sort": (help_note_tag_sort, 0),
 }

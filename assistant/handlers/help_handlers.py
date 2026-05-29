@@ -527,11 +527,11 @@ Command: {CYAN}note tag{RESET}
 Description: Manage tags associated with your notes.
 
 Available Actions:
-
     {CYAN}add{RESET} — Assign a tag to a note.
     {CYAN}change{RESET} — Replace an old tag with a new one on a specific note.
     {CYAN}delete{RESET} — Remove a tag from a note.
     {CYAN}search{RESET} — Filter and find notes matching specific tags.
+    {CYAN}sort{RESET} — Sort all notes alphabetically by their tags.
 """
 
 
@@ -622,4 +622,17 @@ Arguments:
 
 Example:
 note tag delete "Shopping List" grocery
+"""
+
+
+def help_note_tag_sort(*args):
+    return f"""
+Command: {CYAN}note tag sort{RESET}
+Description: Displays all notes sorted alphabetically by their tags. Notes without tags are shown at the bottom.
+
+Usage:
+{CYAN}note tag sort{RESET}
+
+Example:
+note tag sort
 """

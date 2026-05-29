@@ -26,5 +26,8 @@ def unexpected_exit(func):
             return func(*args, **kwargs)
         except KeyboardInterrupt:
             good_bye()
+        except EOFError:
+            print("\n")
+            good_bye()
 
     return wrapper

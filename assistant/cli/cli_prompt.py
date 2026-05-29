@@ -45,6 +45,7 @@ commands_list = [
     "note tag change",
     "note tag delete",
     "note tag search",
+    "note tag sort",
     "help",
     "help contact",
     "help contact add",
@@ -81,6 +82,7 @@ commands_list = [
     "help note tag change",
     "help note tag delete",
     "help note tag search",
+    "help note tag sort",
 ]
 
 
