@@ -9,10 +9,23 @@ commands_list = commands_list_handlers.keys()
 
 
 class AutoSuggestFromList(AutoSuggest):
-    def __init__(self, words):
+    """
+    Provides inline auto-suggestions in the terminal based on a static list of commands.
+    """
+
+    def __init__(self, words: list[str]):
+        """
+        Initializes the auto-suggester with the available application commands.
+
+        Args:
+            words (list[str]): A list of valid command strings.
+        """
         self.words = words
 
-    def get_suggestion(self, buffer, document):
+    def get_suggestion(self, buffer, document) -> Suggestion | None:
+        """
+        Evaluates the current user input buffer and returns the remaining text of a matching command.
+        """
         text = document.text
         if not text:
             return None
@@ -41,7 +54,17 @@ def _(event):
 session = None
 
 
-def get_user_input():
+def get_user_input() -> str:
+    """
+    Captures user input based on the current execution environment.
+
+    If running interactively, initializes the prompt_toolkit session to provide
+    auto-completion and history. If running via pipe/redirection (for E2E tests),
+    bypasses the interactive UI and uses standard input().
+
+    Returns:
+        str: The raw string command entered by the user.
+    """
     global session
 
     # 1. If we are piping/redirecting, bypass prompt_toolkit completely
@@ -53,7 +76,7 @@ def get_user_input():
         history = InMemoryHistory()
         session = PromptSession(
             history=history,
-            auto_suggest=AutoSuggestFromList(commands_list),
+            auto_suggest=AutoSuggestFromList(list(commands_list)),
             key_bindings=kb,
         )
 

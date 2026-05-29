@@ -11,6 +11,18 @@ class Birthday(Field):
         super().__init__(normalized_value)
 
     def validate_and_normalize(self, value: str) -> str:
+        """
+        Validates the birthday format and ensures the date is not in the future.
+
+        Args:
+            value (str): The user-input date string (e.g., 'DD.MM.YYYY').
+
+        Returns:
+            str: The normalized 'DD.MM.YYYY' date string.
+
+        Raises:
+            ValueError: If the date format is invalid or represents a future date.
+        """
         # normalize_date returns a datetime object.
         normalized_datetime = normalize_date(value)
 

@@ -9,29 +9,62 @@ from assistant.utils.birthday_utils import normalize_date
 
 
 @input_error
-def contact_add(args, book: Book):
-    try:
-        name, phone, *extra_args = args
-    except ValueError:
-        raise ValueError("Give me name and phone please")
+def contact_add(args: list[str], book: Book) -> str:
+    """
+    Creates a new contact profile. Optionally accepts a phone number and birthday.
 
+    Args:
+        args (list[str]): User input containing the name, and optionally phone and birthday.
+        book (Book): The root application state containing the address book.
+
+    Returns:
+        str: A success message indicating the contact was added.
+
+    Raises:
+        ValueError: If the required name argument is missing.
+    """
+    try:
+        name, *extra_args = args
+    except ValueError:
+        raise ValueError("Give me name please")
+
+    # Retrieve existing contact or create a new one
     if name in book.addressbook.data:
         record = book.addressbook.data[name]
     else:
         record = Record(name)
         book.addressbook.add_record(record)
 
-    record.add_phone(phone)
+    # Handle the optional phone number
+    if len(args) > 1:
+        phone = args[1]
+        record.add_phone(phone)
 
-    if extra_args:
-        standard_birthday = normalize_date(extra_args[0]).strftime("%d.%m.%Y")
+    # Handle the optional birthday
+    if len(args) > 2:
+        birthday_str = args[2]
+        standard_birthday = normalize_date(birthday_str).strftime("%d.%m.%Y")
         record.set_birthday(standard_birthday)
 
     return "Contact added."
 
 
 @input_error
-def contact_change(args, book: Book):
+def contact_change(args: list[str], book: Book) -> str:
+    """
+    Updates the primary name of an existing contact.
+
+    Args:
+        args (list[str]): User input containing the old name and the new name.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the name was changed.
+
+    Raises:
+        ValueError: If the arguments are missing or if the new name already exists.
+        KeyError: If the original contact name is not found.
+    """
     try:
         old_name, new_name, *_ = args
     except ValueError:
@@ -52,7 +85,21 @@ def contact_change(args, book: Book):
 
 
 @input_error
-def contact_delete(args, book: Book):
+def contact_delete(args: list[str], book: Book) -> str:
+    """
+    Permanently removes a contact and all associated data from the address book.
+
+    Args:
+        args (list[str]): User input containing the name of the contact to delete.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming deletion.
+
+    Raises:
+        ValueError: If the contact name argument is missing.
+        KeyError: If the contact is not found in the address book.
+    """
     if not args:
         raise ValueError("Give me a contact name to delete please")
 
@@ -65,7 +112,18 @@ def contact_delete(args, book: Book):
 
 
 @input_error
-def contact_search(args, book: Book) -> str:
+def contact_search(args: list[str], book: Book) -> str:
+    """
+    Searches for contacts matching a query across names, phones, emails, addresses, and birthdays.
+    If no query is provided, it returns a formatted table of all contacts.
+
+    Args:
+        args (list[str]): An optional list containing a single search string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A visually formatted rich table of matching contacts, or an empty state message.
+    """
     # If no arguments are passed, show all contacts
     if not args or not args[0].strip():
         if not book.addressbook.data:
@@ -108,7 +166,17 @@ def contact_search(args, book: Book) -> str:
 
 
 @input_error
-def contact_phone_add(args, book: Book):
+def contact_phone_add(args: list[str], book: Book) -> str:
+    """
+    Adds a new phone number to a contact. Creates the contact if it doesn't exist.
+
+    Args:
+        args (list[str]): User input containing the contact name and phone number.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the phone number was added.
+    """
     try:
         name, phone, *_ = args
     except ValueError:
@@ -125,7 +193,17 @@ def contact_phone_add(args, book: Book):
 
 
 @input_error
-def contact_phone_change(args, book: Book):
+def contact_phone_change(args: list[str], book: Book) -> str:
+    """
+    Updates an existing phone number for a specific contact.
+
+    Args:
+        args (list[str]): User input containing name, old phone number, and new phone number.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the phone number was updated.
+    """
     try:
         name, old_phone, new_phone, *_ = args
     except ValueError:
@@ -136,6 +214,10 @@ def contact_phone_change(args, book: Book):
 
     record = book.addressbook.data[name]
     target_digits = Phone.get_num(old_phone)
+    new_digits = Phone.get_num(new_phone)
+
+    if any(Phone.get_num(p.value) == new_digits for p in record.phones):
+        raise ValueError(f"Phone number '{new_phone}' already exists for {name}.")
 
     for idx, phone_obj in enumerate(record.phones):
         if Phone.get_num(phone_obj.value) == target_digits:
@@ -148,7 +230,17 @@ def contact_phone_change(args, book: Book):
 
 
 @input_error
-def contact_phone_delete(args, book: Book):
+def contact_phone_delete(args: list[str], book: Book) -> str:
+    """
+    Removes a specific phone number from a contact.
+
+    Args:
+        args (list[str]): User input containing the contact name and the phone number to delete.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming deletion.
+    """
     try:
         name, phone, *_ = args
     except ValueError:
@@ -169,7 +261,17 @@ def contact_phone_delete(args, book: Book):
 
 
 @input_error
-def contact_phone_search(args, book: Book) -> str:
+def contact_phone_search(args: list[str], book: Book) -> str:
+    """
+    Searches for contacts matching a specific phone number.
+
+    Args:
+        args (list[str]): User input containing the phone number digits to search for.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table of matching contacts.
+    """
     if not args:
         raise ValueError("Give me a phone number to search for please")
 
@@ -195,7 +297,17 @@ def contact_phone_search(args, book: Book) -> str:
 
 
 @input_error
-def contact_email_add(args, book: Book):
+def contact_email_add(args: list[str], book: Book) -> str:
+    """
+    Adds a new email address to a contact. Creates the contact if it doesn't exist.
+
+    Args:
+        args (list[str]): User input containing the contact name and email address.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the email was added.
+    """
     try:
         name, email, *_ = args
     except ValueError:
@@ -212,7 +324,17 @@ def contact_email_add(args, book: Book):
 
 
 @input_error
-def contact_email_change(args, book: Book):
+def contact_email_change(args: list[str], book: Book) -> str:
+    """
+    Updates an existing email address for a specific contact.
+
+    Args:
+        args (list[str]): User input containing name, old email, and new email.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the email was updated.
+    """
     try:
         name, old_email, new_email, *_ = args
     except ValueError:
@@ -223,6 +345,10 @@ def contact_email_change(args, book: Book):
 
     record = book.addressbook.data[name]
     old_email_clean = old_email.strip().lower()
+    new_email_clean = new_email.strip().lower()
+
+    if any(e.value.lower() == new_email_clean for e in record.emails):
+        raise ValueError(f"Email '{new_email}' already exists for {name}.")
 
     for idx, email_obj in enumerate(record.emails):
         if email_obj.value.lower() == old_email_clean:
@@ -233,7 +359,17 @@ def contact_email_change(args, book: Book):
 
 
 @input_error
-def contact_email_delete(args, book: Book):
+def contact_email_delete(args: list[str], book: Book) -> str:
+    """
+    Removes a specific email address from a contact.
+
+    Args:
+        args (list[str]): User input containing the contact name and email to delete.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming deletion.
+    """
     try:
         name, email, *_ = args
     except ValueError:
@@ -254,7 +390,17 @@ def contact_email_delete(args, book: Book):
 
 
 @input_error
-def contact_email_search(args, book: Book) -> str:
+def contact_email_search(args: list[str], book: Book) -> str:
+    """
+    Searches for contacts matching a specific email keyword.
+
+    Args:
+        args (list[str]): User input containing the email string to search for.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table of matching contacts.
+    """
     if not args:
         raise ValueError("Give me an email keyword to search for please")
 
@@ -274,7 +420,17 @@ def contact_email_search(args, book: Book) -> str:
 
 
 @input_error
-def contact_birthday_set(args, book: Book) -> str:
+def contact_birthday_set(args: list[str], book: Book) -> str:
+    """
+    Sets the birthday date for a specific contact.
+
+    Args:
+        args (list[str]): User input containing the contact name and birthday date.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the birthday was set.
+    """
     try:
         name, date_str, *_ = args
     except ValueError:
@@ -291,7 +447,17 @@ def contact_birthday_set(args, book: Book) -> str:
 
 
 @input_error
-def contact_birthday_change(args, book: Book) -> str:
+def contact_birthday_change(args: list[str], book: Book) -> str:
+    """
+    Updates the existing birthday date for a specific contact.
+
+    Args:
+        args (list[str]): User input containing the contact name and new birthday date.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the birthday was updated.
+    """
     # Setting and changing share identical mechanics under the hood
     try:
         name, new_date_str, *_ = args
@@ -309,7 +475,17 @@ def contact_birthday_change(args, book: Book) -> str:
 
 
 @input_error
-def contact_birthday_delete(args, book: Book) -> str:
+def contact_birthday_delete(args: list[str], book: Book) -> str:
+    """
+    Removes the birthday data from a specific contact.
+
+    Args:
+        args (list[str]): User input containing the contact name.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the birthday was removed.
+    """
     if not args:
         raise ValueError("Give me a contact name please")
 
@@ -367,14 +543,34 @@ def contact_birthday_search(args, book: Book) -> str:
 
 
 @input_error
-def show_all(args, book: Book) -> str:
+def show_all(args: list[str], book: Book) -> str:
+    """
+    Retrieves and displays all contacts in the address book.
+
+    Args:
+        args (list[str]): Ignored arguments.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table containing all saved contacts.
+    """
     if not book.addressbook.data:
         return "No contacts."
     return format_contacts_table(list(book.addressbook.data.values()))
 
 
 @input_error
-def contact_address_set(args, book: Book):
+def contact_address_set(args: list[str], book: Book) -> str:
+    """
+    Sets the physical address for a specific contact.
+
+    Args:
+        args (list[str]): User input containing the contact name and address string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the address was updated.
+    """
     try:
         name, *parts = args
     except ValueError:
@@ -391,7 +587,17 @@ def contact_address_set(args, book: Book):
 
 
 @input_error
-def contact_address_change(args, book: Book):
+def contact_address_change(args: list[str], book: Book) -> str:
+    """
+    Updates the physical address for a specific contact.
+
+    Args:
+        args (list[str]): User input containing the contact name and the new address string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the address was updated.
+    """
     try:
         name, *address_parts = args
     except ValueError:
@@ -410,7 +616,17 @@ def contact_address_change(args, book: Book):
 
 
 @input_error
-def contact_address_delete(args, book: Book):
+def contact_address_delete(args: list[str], book: Book) -> str:
+    """
+    Removes the physical address data from a specific contact.
+
+    Args:
+        args (list[str]): User input containing the contact name.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the address was removed.
+    """
     if not args:
         raise ValueError("Give me a contact name please")
 
@@ -427,7 +643,17 @@ def contact_address_delete(args, book: Book):
 
 
 @input_error
-def contact_address_search(args, book: Book) -> str:
+def contact_address_search(args: list[str], book: Book) -> str:
+    """
+    Searches for contacts matching a specific physical address keyword.
+
+    Args:
+        args (list[str]): User input containing the address string to search for.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table of matching contacts.
+    """
     if not args:
         raise ValueError("Give me an address keyword to search for please")
 

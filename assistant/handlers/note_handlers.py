@@ -4,7 +4,20 @@ from assistant.utils.table_printer import format_notes_table
 
 
 @input_error
-def note_add(args, book: Book):
+def note_add(args: list[str], book: Book) -> str:
+    """
+    Creates a new text note and assigns it an auto-incrementing ID.
+
+    Args:
+        args (list[str]): The body text of the note, split into words.
+        book (Book): The root application state containing the notebook.
+
+    Returns:
+        str: A success message including the newly generated note ID.
+
+    Raises:
+        ValueError: If no text is provided.
+    """
     if not args:
         raise ValueError("Give me note text please")
 
@@ -14,7 +27,17 @@ def note_add(args, book: Book):
 
 
 @input_error
-def note_change(args, book: Book):
+def note_change(args: list[str], book: Book) -> str:
+    """
+    Overwrites the text content of an existing note.
+
+    Args:
+        args (list[str]): User input containing the note ID and the new text content.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the note was updated.
+    """
     try:
         note_id = int(args[0])
         text = " ".join(args[1:])
@@ -32,7 +55,17 @@ def note_change(args, book: Book):
 
 
 @input_error
-def note_delete(args, book: Book):
+def note_delete(args: list[str], book: Book) -> str:
+    """
+    Deletes a specific note from the notebook.
+
+    Args:
+        args (list[str]): User input containing the ID of the note to delete.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming deletion.
+    """
     if not args:
         raise ValueError("Give me note ID please")
 
@@ -48,7 +81,17 @@ def note_delete(args, book: Book):
 
 
 @input_error
-def note_search(args, book: Book):
+def note_search(args: list[str], book: Book) -> str:
+    """
+    Searches through all notes for a specific text keyword. If no keyword is provided, returns all notes.
+
+    Args:
+        args (list[str]): User input containing the search string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table of matching notes.
+    """
     if not book.notebook.data:
         return "No notes found."
 
@@ -68,7 +111,20 @@ def note_search(args, book: Book):
 
 
 @input_error
-def note_tag_add(args, book: Book):
+def note_tag_add(args: list[str], book: Book) -> str:
+    """
+    Assigns a descriptive tag to an existing note.
+
+    Args:
+        args (list[str]): User input containing the note ID and the tag string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the tag attachment, or an error if the tag exists.
+
+    Raises:
+        ValueError: If the note ID is missing/invalid, or the tag name is missing.
+    """
     try:
         note_id = int(args[0])
         tag = args[1].lower()
@@ -85,7 +141,17 @@ def note_tag_add(args, book: Book):
 
 
 @input_error
-def note_tag_change(args, book: Book):
+def note_tag_change(args: list[str], book: Book) -> str:
+    """
+    Replaces an existing tag with a new tag name on a specific note.
+
+    Args:
+        args (list[str]): User input containing the note ID, old tag name, and new tag name.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the tag was updated.
+    """
     try:
         note_id = int(args[0])
         old_tag = args[1].lower()
@@ -108,7 +174,17 @@ def note_tag_change(args, book: Book):
 
 
 @input_error
-def note_tag_delete(args, book: Book):
+def note_tag_delete(args: list[str], book: Book) -> str:
+    """
+    Removes a specific tag from a note.
+
+    Args:
+        args (list[str]): User input containing the note ID and the tag to remove.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the tag was removed.
+    """
     try:
         note_id = int(args[0])
         tag = args[1].lower()
@@ -125,10 +201,17 @@ def note_tag_delete(args, book: Book):
 
 
 @input_error
-def note_tag_search(args, book: Book):
+def note_tag_search(args: list[str], book: Book) -> str:
     """
-    Searches for notes containing a specific tag (partial match).
-    If no tag is provided, displays a list of all unique tags currently in use.
+    Filters the notebook to find notes containing a specific tag (partial matches allowed).
+    If no tag is provided, displays a list of all unique tags currently in use across the system.
+
+    Args:
+        args (list[str]): An optional list containing the tag search query.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table of matching notes, or a bulleted list of all available tags.
     """
     # CASE 1: No arguments provided -> Show all unique tags
     if not args or not args[0].strip():

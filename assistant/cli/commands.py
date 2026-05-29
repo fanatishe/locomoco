@@ -152,7 +152,7 @@ commands_list = {
     "help contact birthday search": (help_contact_birthday_search, 0),
     "help contact address": (help_contact_address, 0),
     "help contact address set": (help_contact_address_set, 0),
-    "help contact address change,": (help_contact_address_change, 0),
+    "help contact address change": (help_contact_address_change, 0),
     "help contact address delete": (help_contact_address_delete, 0),
     "help contact address search": (help_contact_address_search, 0),
     "help note": (help_note, 0),

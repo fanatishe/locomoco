@@ -3,12 +3,23 @@ from assistant.contacts.field import Field
 
 
 class Phone(Field):
+    """Represents a contact's phone. Has basic validation on add/edit"""
+
     COUNTRY_CODE = "38"
     NUM_LEN = 10
     NUM_PATTERN = r"[^0-9]+"
 
     @staticmethod
     def get_num(phone: str) -> str:
+        """
+        Strips all non-numeric characters from a given string.
+
+        Args:
+            phone (str): The raw string containing the phone number.
+
+        Returns:
+            str: A string containing strictly the numeric digits.
+        """
         return re.sub(rf"{Phone.NUM_PATTERN}", "", phone)
 
     def __init__(self, phone: str):

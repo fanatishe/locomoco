@@ -13,7 +13,15 @@ def _render(table: Table) -> str:
 
 
 def format_contact(record: Record) -> str:
-    """Single contact — two-column rich table with field name and value."""
+    """
+    Renders a single contact as a two-column vertical table (Field | Value).
+
+    Args:
+        record (Record): The specific contact record to display.
+
+    Returns:
+        str: A terminal-ready string containing the rendered Rich table.
+    """
     table = Table(show_header=False, show_lines=True)
     table.add_column(style="bold")
     table.add_column()
@@ -26,7 +34,15 @@ def format_contact(record: Record) -> str:
 
 
 def format_contacts_table(records: list[Record]) -> str:
-    """Multiple contacts — styled table via rich library."""
+    """
+    Renders multiple contacts in a horizontal data grid.
+
+    Args:
+        records (list[Record]): A list of matching contact records.
+
+    Returns:
+        str: A terminal-ready string containing the styled Rich table.
+    """
     headers = list(records[0].to_dict().keys())
 
     table = Table(title="Contacts", show_lines=True)
@@ -41,8 +57,14 @@ def format_contacts_table(records: list[Record]) -> str:
 
 def format_notes_table(notes: list[dict]) -> str:
     """
-    Takes a list of note dictionaries and formats them into a styled rich table.
-    Expected dict format: {"id": int, "tags": list[str], "text": str}
+    Renders a list of notes and their attached tags into a styled table.
+
+    Args:
+        notes (list[dict]): A list of serialized note dictionaries containing
+                            'id', 'tags', and 'text' keys.
+
+    Returns:
+        str: A terminal-ready string containing the styled Rich table.
     """
     if not notes:
         return "No notes found."

@@ -10,12 +10,17 @@ from assistant.cli.exceptions import GoodByeException
 
 @unexpected_exit
 def run_cli():
+    """Runs the main CLI loop (or takes data from pipe/file)"""
     generate_jarvis_interface()
     book = load_data()
 
     try:
         while True:
             user_input = get_user_input()
+
+            # workaround for empty line on file processing/tests
+            if not user_input.strip():
+                continue
 
             command_parts = parse_input(user_input)
             handler, args = dispatch(command_parts)

@@ -12,10 +12,20 @@ COLUMN_STYLES = {
 
 
 def format_name(name: Name) -> str:
+    """
+    Extracts the string representation of a Name object.
+
+    Args:
+        name (Name): The contact's name field.
+
+    Returns:
+        str: The string value of the name.
+    """
     return str(name)
 
 
 def format_phones(phones: list[Phone]) -> str:
+    """Formats a list of Phone objects into a single Ukrainian-formatted string (+38...)."""
     formatted_list = []
     for phone in phones:
         raw = str(phone.value)
@@ -26,8 +36,26 @@ def format_phones(phones: list[Phone]) -> str:
 
 
 def format_address(address: Address | None) -> str:
+    """
+    Formats an Address object for table display.
+
+    Args:
+        address (Address | None): The address object, or None if not set.
+
+    Returns:
+        str: The address string, or '-' if no address is provided.
+    """
     return str(address) if address else "-"
 
 
 def format_emails(emails: list[Email]) -> str:
+    """
+    Formats a list of Email objects into a multi-line string for table display.
+
+    Args:
+        emails (list[Email]): A list of email fields attached to a contact.
+
+    Returns:
+        str: Newline-separated email addresses, or '-' if the list is empty.
+    """
     return "\n".join(str(email) for email in emails) or "-"
