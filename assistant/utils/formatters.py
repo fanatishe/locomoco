@@ -16,6 +16,7 @@ def format_name(name: Name) -> str:
 
 
 def format_phones(phones: list[Phone]) -> str:
+    """Formats a list of Phone objects into a single Ukrainian-formatted string (+38...)."""
     formatted_list = []
     for phone in phones:
         raw = str(phone.value)

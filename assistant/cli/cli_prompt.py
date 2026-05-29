@@ -41,7 +41,17 @@ def _(event):
 session = None
 
 
-def get_user_input():
+def get_user_input() -> str:
+    """
+    Captures user input based on the current execution environment.
+
+    If running interactively, initializes the prompt_toolkit session to provide
+    auto-completion and history. If running via pipe/redirection (for E2E tests),
+    bypasses the interactive UI and uses standard input().
+
+    Returns:
+        str: The raw string command entered by the user.
+    """
     global session
 
     # 1. If we are piping/redirecting, bypass prompt_toolkit completely

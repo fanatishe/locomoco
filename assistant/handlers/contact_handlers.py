@@ -9,7 +9,20 @@ from assistant.utils.birthday_utils import normalize_date
 
 
 @input_error
-def contact_add(args, book: Book):
+def contact_add(args: list[str], book: Book) -> str:
+    """
+    Creates a new contact profile. Optionally accepts a phone number and birthday.
+
+    Args:
+        args (list[str]): User input containing the name, and optionally phone and birthday.
+        book (Book): The root application state containing the address book.
+
+    Returns:
+        str: A success message indicating the contact was added.
+
+    Raises:
+        ValueError: If the required name argument is missing.
+    """
     try:
         name, *extra_args = args
     except ValueError:
@@ -37,7 +50,21 @@ def contact_add(args, book: Book):
 
 
 @input_error
-def contact_change(args, book: Book):
+def contact_change(args: list[str], book: Book) -> str:
+    """
+    Updates the primary name of an existing contact.
+
+    Args:
+        args (list[str]): User input containing the old name and the new name.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the name was changed.
+
+    Raises:
+        ValueError: If the arguments are missing or if the new name already exists.
+        KeyError: If the original contact name is not found.
+    """
     try:
         old_name, new_name, *_ = args
     except ValueError:
@@ -58,7 +85,21 @@ def contact_change(args, book: Book):
 
 
 @input_error
-def contact_delete(args, book: Book):
+def contact_delete(args: list[str], book: Book) -> str:
+    """
+    Permanently removes a contact and all associated data from the address book.
+
+    Args:
+        args (list[str]): User input containing the name of the contact to delete.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming deletion.
+
+    Raises:
+        ValueError: If the contact name argument is missing.
+        KeyError: If the contact is not found in the address book.
+    """
     if not args:
         raise ValueError("Give me a contact name to delete please")
 
@@ -71,7 +112,18 @@ def contact_delete(args, book: Book):
 
 
 @input_error
-def contact_search(args, book: Book) -> str:
+def contact_search(args: list[str], book: Book) -> str:
+    """
+    Searches for contacts matching a query across names, phones, emails, addresses, and birthdays.
+    If no query is provided, it returns a formatted table of all contacts.
+
+    Args:
+        args (list[str]): An optional list containing a single search string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A visually formatted rich table of matching contacts, or an empty state message.
+    """
     # If no arguments are passed, show all contacts
     if not args or not args[0].strip():
         if not book.addressbook.data:
