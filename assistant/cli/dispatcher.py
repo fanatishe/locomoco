@@ -1,4 +1,14 @@
 from assistant.cli.commands import commands_list
+from difflib import get_close_matches
+
+
+def guess_command(user_input, available_commands):
+    # Returns a list of the closest matches
+    matches = get_close_matches(user_input, available_commands, n=1, cutoff=0.6)
+
+    if matches:
+        return f"Invalid command. Did you mean '{matches[0]}'?\n"
+    return "Invalid command.\n"
 
 
 def dispatch(command_parts: list[str]) -> tuple:
@@ -23,20 +33,4 @@ def dispatch(command_parts: list[str]) -> tuple:
                 if "help " + command in commands_names:
                     return commands_list["help " + command][0], args
 
-    # if not commands:
-    #     commands = COMMANDS
-
-    # if len(command_parts) == 0 and "/" in commands and callable(commands["/"]):
-    #     return (commands["/"], [])
-    # else:
-    #     command = command_parts[0].lower()
-
-    # if command in commands:
-    #     if callable(commands[command]):
-    #         return (commands[command], command_parts[1:])
-    #     elif isinstance(commands[command], str):
-    #         return (commands[command], [])
-    #     elif isinstance(commands[command], dict):
-    #         return dispatch(command_parts[1:], commands[command])
-
-    return (lambda *_: "Invalid command.", [])
+    return (lambda *_: guess_command(" ".join(command_parts), commands_names), [])
