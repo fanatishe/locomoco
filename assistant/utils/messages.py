@@ -40,6 +40,7 @@ def generate_jarvis_interface():
 
 Welcome to the assistant
 Use {WHITE_BOLD}tab{RESET} or {WHITE_BOLD}right arrow{RESET} for auto-complete
+Enter {CYAN}help{RESET} command to see the list of all commands
 
 """
     print(jarvis_ascii)
