@@ -1,9 +1,9 @@
+import sys
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.auto_suggest import AutoSuggest, Suggestion
 from assistant.cli.commands import commands_list as commands_list_handlers
-
 
 commands_list = commands_list_handlers.keys()
 
@@ -37,15 +37,27 @@ def _(event):
         buffer.insert_text(suggestion.text)
 
 
-history = InMemoryHistory()
-session = PromptSession(
-    history=history,
-    auto_suggest=AutoSuggestFromList(commands_list),
-    key_bindings=kb,
-)
+# Set session to None initially to avoid the fd=0 warning
+session = None
 
 
 def get_user_input():
+    global session
+
+    # 1. If we are piping/redirecting, bypass prompt_toolkit completely
+    if not sys.stdin.isatty():
+        return input()
+
+    # 2. Only initialize the PromptSession if we are in an interactive terminal
+    if session is None:
+        history = InMemoryHistory()
+        session = PromptSession(
+            history=history,
+            auto_suggest=AutoSuggestFromList(commands_list),
+            key_bindings=kb,
+        )
+
+    # 3. Proceed with the interactive prompt
     while True:
         try:
             user_input = session.prompt("Enter a command: ")
