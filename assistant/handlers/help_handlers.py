@@ -1,21 +1,65 @@
 CYAN = "\033[96m"
 RESET = "\033[0m"
+WHITE_BOLD = "\033[1;97m"
 
 
 def help_default(*args):
     return f"""
-Welcome to the main help
+----------------------------
+| Welcome to the main help |
+----------------------------
 
-Use {CYAN}exit{RESET} or {CYAN}close{RESET} to exit the assistant.
-Usage: [command] [sub-command] [arguments]
-
-Available Command Groups:
-    {CYAN}contact{RESET} — Manage contact profiles (names, birthdays, addresses).
-    {CYAN}note{RESET} — Create and manage text notes and tags.
-
-
-Use {CYAN}help{RESET} {CYAN}<command>{RESET} to see a help for a specific command.
+Use {CYAN}help <command>{RESET} to see detailed help for a specific command.
 E.g. {CYAN}help contact{RESET}
+
+{CYAN}--- {WHITE_BOLD}General{CYAN} ---{RESET}
+  {CYAN}hello{RESET}                  - Greet the assistant
+  {CYAN}all{RESET}                    - Show all contacts
+  {CYAN}exit / close{RESET}           - Close the application
+  {CYAN}help{RESET}                   - Show main help menu
+
+{CYAN}--- {WHITE_BOLD}Contacts{RESET} ---{RESET}
+  {CYAN}contact add{RESET}            - Create a new contact
+  {CYAN}contact change{RESET}         - Rename an existing contact
+  {CYAN}contact delete{RESET}         - Delete a contact completely
+  {CYAN}contact search{RESET}         - Search contacts by name (or list all)
+
+{CYAN}--- {WHITE_BOLD}Phone Numbers{RESET} ---{RESET}
+  {CYAN}contact phone add{RESET}      - Add a phone number
+  {CYAN}contact phone change{RESET}   - Change an existing phone number
+  {CYAN}contact phone delete{RESET}   - Delete a phone number
+  {CYAN}contact phone search{RESET}   - Search contacts by phone number
+
+{CYAN}--- {WHITE_BOLD}Emails{RESET} ---{RESET}
+  {CYAN}contact email add{RESET}      - Add an email address
+  {CYAN}contact email change{RESET}   - Change an existing email address
+  {CYAN}contact email delete{RESET}   - Delete an email address
+  {CYAN}contact email search{RESET}   - Search contacts by email address
+
+{CYAN}--- {WHITE_BOLD}Birthdays{RESET} ---{RESET}
+  {CYAN}contact birthday set{RESET}   - Set a birthday date
+  {CYAN}contact birthday change{RESET}- Update a birthday date
+  {CYAN}contact birthday delete{RESET}- Remove a birthday date
+  {CYAN}contact birthday search{RESET}- Search by date or upcoming days
+
+{CYAN}--- {WHITE_BOLD}Addresses{RESET} ---{RESET}
+  {CYAN}contact address set{RESET}    - Set a physical address
+  {CYAN}contact address change{RESET} - Update a physical address
+  {CYAN}contact address delete{RESET} - Remove a physical address
+  {CYAN}contact address search{RESET} - Search contacts by address keyword
+
+{CYAN}--- {WHITE_BOLD}Notes{RESET} ---{RESET}
+  {CYAN}note add{RESET}               - Create a new note
+  {CYAN}note change{RESET}            - Edit the text of an existing note
+  {CYAN}note delete{RESET}            - Delete a note by ID
+  {CYAN}note search{RESET}            - Search notes by text keyword
+
+{CYAN}--- {WHITE_BOLD}Note Tags{RESET} ---{RESET}
+  {CYAN}note tag add{RESET}           - Add a tag to a note
+  {CYAN}note tag change{RESET}        - Edit a tag on a note
+  {CYAN}note tag delete{RESET}        - Remove a tag from a note
+  {CYAN}note tag search{RESET}        - Search notes by tag (or list all tags)
+  {CYAN}note tag sort{RESET}          - Sort notes alphabetically by their tags
 """
 
 
