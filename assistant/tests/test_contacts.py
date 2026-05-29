@@ -16,12 +16,16 @@ def build_book():
     contact_add(["Alice", "1234567890"], book)
     contact_add(["Alice", "0987654321"], book)
 
-    book.addressbook.find("Alice").set_address("Kyiv, Khreshchatyk 1")
-    book.addressbook.find("Alice").add_email("alice@example.com")
-    book.addressbook.find("Alice").add_email("alice.work@company.com")
+    record = book.addressbook.find("Alice")
+    if record:
+        record.set_address("Kyiv, Khreshchatyk 1")
+        record.add_email("alice@example.com")
+        record.add_email("alice.work@company.com")
 
     contact_add(["Bob", "5555555555"], book)
-    book.addressbook.find("Bob").add_email("bob@gmail.com")
+    record = book.addressbook.find("Bob")
+    if record:
+        record.add_email("bob@gmail.com")
 
     contact_add(["Charlie", "1111111111"], book)
 
@@ -55,7 +59,9 @@ def test_show_all_empty():
 def test_invalid_email():
     print("\n=== invalid email ===")
     book = build_book()
-    book.addressbook.find("Alice").add_email("not-an-email")
+    record = book.addressbook.find("Alice")
+    if record:
+        record.add_email("not-an-email")
 
 
 def test_search_contact():

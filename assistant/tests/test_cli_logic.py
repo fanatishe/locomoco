@@ -25,7 +25,7 @@ def test_cli():
     print("\n--- Command Guessing ---")
     # Simulate user typos
     typos = ["helpp", "contct add", "alll", "noote searh"]
-    cmds = commands_list.keys()
+    cmds = list(commands_list.keys())
 
     for typo in typos:
         suggestion = guess_command(typo, cmds)

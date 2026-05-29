@@ -10,11 +10,24 @@ class AddressBook(UserDict[str, Record]):
     """
 
     def add_record(self, record: Record) -> None:
-        """Adds a new Record to the address book using the contact's name as the key."""
+        """
+        Adds a new Record to the address book using the contact's name as the key.
+
+        Args:
+            record (Record): The completely formed contact record to store.
+        """
         self.data[record.name.value] = record
 
     def find(self, name: str) -> Record | None:
-        """Retrieves a Record by name, returning None if not found."""
+        """
+        Retrieves a Record by its exact name.
+
+        Args:
+            name (str): The name of the contact to find.
+
+        Returns:
+            Record | None: The matched Record object, or None if it doesn't exist.
+        """
         return self.data.get(name)
 
     def get_upcoming_birthdays(self, days: int) -> list[Record]:
