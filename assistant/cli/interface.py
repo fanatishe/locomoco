@@ -18,6 +18,10 @@ def run_cli():
         while True:
             user_input = get_user_input()
 
+            # workaround for empty line on file processing/tests
+            if not user_input.strip():
+                continue
+
             command_parts = parse_input(user_input)
             handler, args = dispatch(command_parts)
 
