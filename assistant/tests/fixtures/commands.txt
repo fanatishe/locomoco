@@ -1,0 +1,44 @@
+help
+
+contact add Alice 0501234567 15.05.1990
+contact add Bob 0671234567
+contact change Alice Alicia
+contact search Ali
+
+contact phone add Alicia 0931234567
+contact phone change Alicia 0501234567 0509876543
+contact phone search 0671234567
+contact phone delete Alicia 0931234567
+
+contact email add Alicia alicia@example.com
+contact email change Alicia alicia@example.com alicia.new@example.com
+contact email search alicia
+contact email delete Alicia alicia.new@example.com
+
+contact birthday set Bob 20.08.1995
+contact birthday change Bob 21.08.1995
+contact birthday search 7
+contact birthday delete Bob
+
+contact address set Alicia Kyiv, Khreshchatyk 1
+contact address change Alicia Kyiv, Khreshchatyk 2
+contact address search Kyiv
+contact address delete Alicia
+
+note add Buy milk and bread
+note add Call the doctor tomorrow
+note change 1 Buy milk, bread, and eggs
+note search bread
+
+note tag add 1 groceries
+note tag add 2 urgent
+note tag add 2 health
+note tag change 2 urgent important
+note tag delete 2 health
+note tag search groceries
+note tag sort
+
+contact delete Bob
+note delete 2
+all
+exit

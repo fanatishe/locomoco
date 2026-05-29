@@ -9,6 +9,8 @@ def clear_screen():
 
 
 def generate_jarvis_interface():
+    if not sys.stdin.isatty():
+        return
     clear_screen()
     # Simulate a quick systems check load sequence
     CYAN = "\033[96m"
@@ -47,4 +49,6 @@ Enter {CYAN}help{RESET} command to see the list of all commands
 
 
 def good_bye():
+    if not sys.stdin.isatty():
+        return
     print("Good bye!")
