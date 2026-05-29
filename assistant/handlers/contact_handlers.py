@@ -3,6 +3,8 @@ from assistant.utils.decorators import input_error
 from assistant.utils.table_printer import format_contacts_table
 from assistant.contacts.address_book import Book
 from assistant.contacts.phone import Phone
+from assistant.contacts.email import Email
+from assistant.contacts.name import Name
 from assistant.utils.birthday_utils import normalize_date
 
 
@@ -28,12 +30,37 @@ def contact_add(args, book: Book):
     return "Contact added."
 
 
-def contact_change(*args):
-    return "Command 'contact_change' TO BE IMPLEMENTED"
+@input_error
+def contact_change(args, book: Book):
+    try:
+        old_name, new_name, *_ = args
+    except ValueError:
+        raise ValueError("Give me the old name and the new name please")
+
+    if old_name not in book.addressbook.data:
+        raise KeyError()
+
+    if new_name in book.addressbook.data:
+        raise ValueError(f"Contact with the name '{new_name}' already exists.")
+
+    record = book.addressbook.data.pop(old_name)
+    record.name = Name(new_name)
+    book.addressbook.data[new_name] = record
+
+    return f"Contact name updated from '{old_name}' to '{new_name}'."
 
 
-def contact_delete(*args):
-    return "Command 'contact_delete' TO BE IMPLEMENTED"
+@input_error
+def contact_delete(args, book: Book):
+    if not args:
+        raise ValueError("Give me a contact name to delete please")
+
+    name = args[0]
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    del book.addressbook.data[name]
+    return f"Contact '{name}' removed completely from the system."
 
 
 @input_error
@@ -57,16 +84,63 @@ def contact_search(args, book: Book) -> str:
     return format_contacts_table(matched_records)
 
 
-def contact_phone_add(*args):
-    return "Command 'contact_phone_add' TO BE IMPLEMENTED"
+@input_error
+def contact_phone_add(args, book: Book):
+    try:
+        name, phone, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and phone number please")
+
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    record = book.addressbook.data[name]
+    record.add_phone(phone)
+    return f"Phone number '{phone}' added to contact {name}."
 
 
-def contact_phone_change(*args):
-    return "Command 'contact_phone_change' TO BE IMPLEMENTED"
+@input_error
+def contact_phone_change(args, book: Book):
+    try:
+        name, old_phone, new_phone, *_ = args
+    except ValueError:
+        raise ValueError("Give me name, old phone, and new phone number please")
+
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    record = book.addressbook.data[name]
+    target_digits = Phone.get_num(old_phone)
+
+    for idx, phone_obj in enumerate(record.phones):
+        if Phone.get_num(phone_obj.value) == target_digits:
+            record.phones[idx] = Phone(new_phone)
+            return (
+                f"Phone number updated from '{old_phone}' to '{new_phone}' for {name}."
+            )
+
+    return f"Phone number '{old_phone}' not found for contact {name}."
 
 
-def contact_phone_delete(*args):
-    return "Command 'contact_phone_delete' TO BE IMPLEMENTED"
+@input_error
+def contact_phone_delete(args, book: Book):
+    try:
+        name, phone, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and phone number to delete please")
+
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    record = book.addressbook.data[name]
+    target_digits = Phone.get_num(phone)
+
+    for phone_obj in record.phones:
+        if Phone.get_num(phone_obj.value) == target_digits:
+            record.phones.remove(phone_obj)
+            return f"Phone number '{phone}' removed from contact {name}."
+
+    return f"Phone number '{phone}' not found for contact {name}."
 
 
 @input_error
@@ -112,12 +186,46 @@ def contact_email_add(args, book: Book):
     return "Email added."
 
 
-def contact_email_change(*args):
-    return "Command 'contact_email_change' TO BE IMPLEMENTED"
+@input_error
+def contact_email_change(args, book: Book):
+    try:
+        name, old_email, new_email, *_ = args
+    except ValueError:
+        raise ValueError("Give me name, old email, and new email please")
+
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    record = book.addressbook.data[name]
+    old_email_clean = old_email.strip().lower()
+
+    for idx, email_obj in enumerate(record.emails):
+        if email_obj.value.lower() == old_email_clean:
+            record.emails[idx] = Email(new_email)
+            return f"Email updated from '{old_email}' to '{new_email}' for {name}."
+
+    return f"Email '{old_email}' not found for contact {name}."
 
 
-def contact_email_delete(*args):
-    return "Command 'contact_email_delete' TO BE IMPLEMENTED"
+@input_error
+def contact_email_delete(args, book: Book):
+    try:
+        name, email, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and email to delete please")
+
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    record = book.addressbook.data[name]
+    email_clean = email.strip().lower()
+
+    for email_obj in record.emails:
+        if email_obj.value.lower() == email_clean:
+            record.emails.remove(email_obj)
+            return f"Email '{email}' removed from contact {name}."
+
+    return f"Email '{email}' not found for contact {name}."
 
 
 @input_error
@@ -247,12 +355,40 @@ def contact_address_set(args, book: Book):
     return "Address updated."
 
 
-def contact_address_change(*args):
-    return "Command 'contact_ddress_change' TO BE IMPLEMENTED"
+@input_error
+def contact_address_change(args, book: Book):
+    try:
+        name, *address_parts = args
+    except ValueError:
+        raise ValueError("Give me name and new address details please")
+
+    if not address_parts:
+        raise ValueError("Give me name and new address details please")
+
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    new_address = " ".join(address_parts)
+    record = book.addressbook.data[name]
+    record.set_address(new_address)
+    return f"Address updated for {name}."
 
 
-def contact_address_delete(*args):
-    return "Command 'contact_address_delete' TO BE IMPLEMENTED"
+@input_error
+def contact_address_delete(args, book: Book):
+    if not args:
+        raise ValueError("Give me a contact name please")
+
+    name = args[0]
+    if name not in book.addressbook.data:
+        raise KeyError()
+
+    record = book.addressbook.data[name]
+    if not record.address:
+        return f"{name} does not have a saved physical address."
+
+    record.address = None
+    return f"Address removed for {name}."
 
 
 @input_error
