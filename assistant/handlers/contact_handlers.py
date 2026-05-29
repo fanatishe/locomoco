@@ -43,9 +43,10 @@ def contact_change(args, book: Book):
     if new_name in book.addressbook.data:
         raise ValueError(f"Contact with the name '{new_name}' already exists.")
 
-    record = book.addressbook.data.pop(old_name)
+    record = book.addressbook.data[old_name]
     record.name = Name(new_name)
     book.addressbook.data[new_name] = record
+    del book.addressbook.data[old_name]
 
     return f"Contact name updated from '{old_name}' to '{new_name}'."
 
