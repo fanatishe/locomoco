@@ -6,9 +6,23 @@ from assistant.contacts.record import Record
 from assistant.utils.formatters import COLUMN_STYLES
 
 
+def _render(table: Table) -> str:
+    buffer = StringIO()
+    Console(file=buffer, force_terminal=True).print(table)
+    return buffer.getvalue()
+
+
 def format_contact(record: Record) -> str:
-    """Single contact — key: value per line."""
-    return "\n".join(f"{key}: {value}" for key, value in record.to_dict().items())
+    """Single contact — two-column rich table with field name and value."""
+    table = Table(show_header=False, show_lines=True)
+    table.add_column(style="bold")
+    table.add_column()
+
+    for key, value in record.to_dict().items():
+        style = COLUMN_STYLES.get(key, "")
+        table.add_row(key, value, style=style)
+
+    return _render(table)
 
 
 def format_contacts_table(records: list[Record]) -> str:
@@ -22,9 +36,4 @@ def format_contacts_table(records: list[Record]) -> str:
     for record in records:
         table.add_row(*record.to_dict().values())
 
-    # StringIO is an in-memory buffer that mimics a file.
-    # Console writes to it instead of stdout, so we can capture the output as a string.
-    # force_terminal=True tells rich to keep ANSI color codes even though it's not a real terminal.
-    buffer = StringIO()
-    Console(file=buffer, force_terminal=True).print(table)
-    return buffer.getvalue()
+    return _render(table)
