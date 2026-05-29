@@ -43,3 +43,7 @@ Use {WHITE_BOLD}tab{RESET} or {WHITE_BOLD}right arrow{RESET} for auto-complete
 
 """
     print(jarvis_ascii)
+
+
+def good_bye():
+    print("Good bye!")

@@ -51,6 +51,19 @@ def test_invalid_email():
     except ValueError as e:
         print(f"Error caught: {e}")
 
+def test_search_contact():
+    print("\n=== search contact ===")
+    book = build_book()
+
+    print(book.find("Alice"))
+    print(book.find("1234567890"))
+    print(book.find("+38 (098) 765-"))
+    print(book.find("8(098)765-43-21"))
+    print(book.find("98765"))
+    print(book.find("96546474"))
+    print(book.find("bob@gmail.com"))
+    print(book.find("5555555555"))
+
 
 if __name__ == "__main__":
     test_show_contact()
@@ -58,3 +71,4 @@ if __name__ == "__main__":
     test_show_all()
     test_show_all_empty()
     test_invalid_email()
+    test_search_contact()
