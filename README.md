@@ -51,11 +51,16 @@ The assistant supports non-interactive execution, allowing you to feed a sequenc
 In this mode, all visual UI elements (like the boot animation and interactive auto-complete) are automatically suppressed to provide a clean, readable standard output.
 
 ### 1. Running from a File
-You can write a list of commands in a text file (e.g., `commands.txt`):
+You can write a list of commands in a text file (e.g., `commands.txt`). You can safely use blank lines and comments (starting with `#`) to organize your test data—the assistant will ignore them during execution:
+
 ```text
-help
+hello
+
+# --- Initial Setup ---
 contact add Alice 0501234567
 contact add Bob 0671234567
+
+# --- Verify and Exit ---
 all
 exit
 ```
@@ -89,7 +94,7 @@ echo "contact search Alice" | python main.py
 | `contact add <name> [phone] [birthday]` | Create a new contact |
 | `contact change <old_name> <new_name>` | Rename a contact |
 | `contact delete <name>` | Delete a contact completely |
-| `contact search [<name>]` | Search contacts by name |
+| `contact search [<name>]` | Search contacts by name (leave empty to show all contacts) |
 
 ### Phones, Emails, Addresses & Birthdays
 
@@ -99,7 +104,7 @@ echo "contact search Alice" | python main.py
 | `contact <field> set <name> <value>` | Set a single record (birthday/address) |
 | `contact <field> change <name> <old> <new>` | Update an existing record |
 | `contact <field> delete <name> <value>` | Remove a record from a contact |
-| `contact <field> search <query>` | Find contacts by value (e.g., upcoming birthdays: `contact birthday search 7`) |
+| `contact <field> search <query>` | Find by value (Birthdays: use a date like "15.05" or an integer like "7" for upcoming days) |
 
 ### Notes & Tags
 
@@ -108,7 +113,9 @@ echo "contact search Alice" | python main.py
 | `note add <title> <text>` | Create a new text note |
 | `note change <id> <text>` | Edit note text |
 | `note delete <id>` | Delete a note |
-| `note search <keyword>` | Search notes by text |
+| `note search [<keyword>]` | Search notes by text (leave empty to list all notes) |
 | `note tag add <id> <tag>` | Add a tag to a note |
-| `note tag search <tag>` | Search notes by tag |
+| `note tag change <id> <old> <new>` | Replace an existing tag with a new one |
+| `note tag delete <id> <tag>` | Remove a specific tag from a note |
+| `note tag search [<tag>]` | Search by tag (leave empty to list all available unique tags) |
 | `note tag sort` | Sort notes alphabetically by tags |
