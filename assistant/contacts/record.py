@@ -42,8 +42,13 @@ class Record:
             )
         self.phones.append(new_phone)
 
-    def set_address(self, address: str):
-        """Validates and sets address of the contact."""
+    def set_address(self, address: str) -> None:
+        """
+        Validates and sets the physical address of the contact.
+
+        Args:
+            address (str): The full physical address string.
+        """
         self.address = Address(address)
 
     def add_email(self, email: str) -> None:
@@ -63,8 +68,13 @@ class Record:
             )
         self.emails.append(new_email)
 
-    def set_birthday(self, birthday_str: str):
-        """Validates and sets birthday of the contact."""
+    def set_birthday(self, birthday_str: str) -> None:
+        """
+        Validates and sets the birthday of the contact.
+
+        Args:
+            birthday_str (str): The string representation of the birthday (e.g., 'DD.MM.YYYY').
+        """
         # Even if Birthday class is a basic Field container right now,
         # it will contain the clean 'DD.MM.YYYY' string.
         self.birthday = Birthday(birthday_str)
@@ -85,6 +95,12 @@ class Record:
             "Birthday": str(self.birthday) if self.birthday else "-",
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Returns a concise string representation of the contact and their phone numbers.
+
+        Returns:
+            str: A formatted string containing the contact's name and phones.
+        """
         phones = "; ".join(str(p) for p in self.phones)
         return f"{self.name.value}: {phones}"

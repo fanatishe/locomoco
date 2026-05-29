@@ -4,6 +4,8 @@ from assistant.contacts.field import Field
 
 
 class Email(Field):
+    """Represents a contact's email address"""
+
     PATTERN = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
     def __init__(self, value: str):

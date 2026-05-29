@@ -3,12 +3,20 @@ import sys
 import time
 
 
-def clear_screen():
+def clear_screen() -> None:
+    """
+    Clears the terminal screen across different operating systems.
+    Uses 'cls' for Windows (NT) and 'clear' for UNIX-based systems.
+    """
     # Clears the terminal for a clean system boot look
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def generate_jarvis_interface():
+def generate_jarvis_interface() -> None:
+    """
+    Displays the initial ASCII art boot sequence and welcome message.
+    Automatically bypasses the animation if the script is not running in an interactive terminal.
+    """
     if not sys.stdin.isatty():
         return
     clear_screen()
@@ -48,7 +56,11 @@ Enter {CYAN}help{RESET} command to see the list of all commands
     print(jarvis_ascii)
 
 
-def good_bye():
+def good_bye(*args) -> None:
+    """
+    Prints the final exit message.
+    Bypasses output if the script is running non-interactively.
+    """
     if not sys.stdin.isatty():
         return
     print("Good bye!")

@@ -27,7 +27,17 @@ def note_add(args: list[str], book: Book) -> str:
 
 
 @input_error
-def note_change(args, book: Book):
+def note_change(args: list[str], book: Book) -> str:
+    """
+    Overwrites the text content of an existing note.
+
+    Args:
+        args (list[str]): User input containing the note ID and the new text content.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message indicating the note was updated.
+    """
     try:
         note_id = int(args[0])
         text = " ".join(args[1:])
@@ -45,7 +55,17 @@ def note_change(args, book: Book):
 
 
 @input_error
-def note_delete(args, book: Book):
+def note_delete(args: list[str], book: Book) -> str:
+    """
+    Deletes a specific note from the notebook.
+
+    Args:
+        args (list[str]): User input containing the ID of the note to delete.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming deletion.
+    """
     if not args:
         raise ValueError("Give me note ID please")
 
@@ -61,7 +81,17 @@ def note_delete(args, book: Book):
 
 
 @input_error
-def note_search(args, book: Book):
+def note_search(args: list[str], book: Book) -> str:
+    """
+    Searches through all notes for a specific text keyword. If no keyword is provided, returns all notes.
+
+    Args:
+        args (list[str]): User input containing the search string.
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted table of matching notes.
+    """
     if not book.notebook.data:
         return "No notes found."
 
@@ -111,7 +141,17 @@ def note_tag_add(args: list[str], book: Book) -> str:
 
 
 @input_error
-def note_tag_change(args, book: Book):
+def note_tag_change(args: list[str], book: Book) -> str:
+    """
+    Replaces an existing tag with a new tag name on a specific note.
+
+    Args:
+        args (list[str]): User input containing the note ID, old tag name, and new tag name.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the tag was updated.
+    """
     try:
         note_id = int(args[0])
         old_tag = args[1].lower()
@@ -134,7 +174,17 @@ def note_tag_change(args, book: Book):
 
 
 @input_error
-def note_tag_delete(args, book: Book):
+def note_tag_delete(args: list[str], book: Book) -> str:
+    """
+    Removes a specific tag from a note.
+
+    Args:
+        args (list[str]): User input containing the note ID and the tag to remove.
+        book (Book): The root application state.
+
+    Returns:
+        str: A success message confirming the tag was removed.
+    """
     try:
         note_id = int(args[0])
         tag = args[1].lower()

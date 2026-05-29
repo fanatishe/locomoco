@@ -3,6 +3,8 @@ from assistant.contacts.field import Field
 
 
 class Phone(Field):
+    """Represents a contact's phone. Has basic validation on add/edit"""
+
     COUNTRY_CODE = "38"
     NUM_LEN = 10
     NUM_PATTERN = r"[^0-9]+"
