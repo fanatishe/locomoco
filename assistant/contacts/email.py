@@ -1,14 +1,13 @@
+# FILE PATH: assistant/contacts/email.py
+import re
 from assistant.contacts.field import Field
-from .field import Field
-from re import match, IGNORECASE
+
 
 class Email(Field):
     PATTERN = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    def __init__(self, value: str):
-        is_valid = self.validate(value)
-        if not is_valid:
-            raise ValueError("Incorrect email")
-        super().__init__(value)
 
-    def validate(self, email: str) -> bool:
-        return match(Email.PATTERN, email, IGNORECASE)
+    def __init__(self, value: str):
+        cleaned = value.strip()
+        if not re.match(self.PATTERN, cleaned):
+            raise ValueError("Incorrect email format (e.g., example@domain.com).")
+        super().__init__(cleaned)
