@@ -42,7 +42,6 @@ class Record:
                 f"Email '{new_email.value}' already exists for {self.name.value}."
             )
         self.emails.append(new_email)
-        self.emails.append(Email(email))
 
     def set_birthday(self, birthday_str: str):
         # Even if Birthday class is a basic Field container right now,
