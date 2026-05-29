@@ -302,32 +302,41 @@ def contact_birthday_delete(args, book: Book) -> str:
 
 @input_error
 def contact_birthday_search(args, book: Book) -> str:
+    """
+    Searches for contacts by a specific birthday or checks for upcoming birthdays
+    if a number of days is provided.
+
+    Args:
+        args (list[str]): User input. Can be a date string ("15.05") or an integer ("7").
+        book (Book): The root application state.
+
+    Returns:
+        str: Formatted table of matching contacts.
+    """
     if not args:
-        raise ValueError("Give me a date or search term to look for please")
+        raise ValueError("Give me a date or number of days to look for please")
 
     search_input = args[0].strip()
-    matched_records = []
 
-    # Case A: User passes a fully qualified target date string to find matching contacts
-    try:
-        target_date = normalize_date(search_input)
-        for record in book.addressbook.data.values():
-            if (
-                getattr(record, "birthday", None)
-                and str(record.birthday) == target_date
-            ):
+    # Case 1: The user passed an integer to find upcoming birthdays (tz.txt requirement)
+    if search_input.isdigit():
+        days = int(search_input)
+        matched_records = book.addressbook.get_upcoming_birthdays(days)
+        if not matched_records:
+            return f"No upcoming birthdays in the next {days} days."
+        return format_contacts_table(matched_records)
+
+    # Case 2: User passed a date substring (e.g., a specific year "1990" or month ".05.")
+    matched_records = []
+    query = search_input.lower()
+
+    for record in book.addressbook.data.values():
+        if getattr(record, "birthday", None):
+            if query in str(record.birthday).lower():
                 matched_records.append(record)
 
-    # Case B: User passes a partial substring match scenario (e.g. searching just a month ".05." or year "1990")
-    except ValueError:
-        query = search_input.lower()
-        for record in book.addressbook.data.values():
-            if getattr(record, "birthday", None):
-                if query in str(record.birthday).lower():
-                    matched_records.append(record)
-
     if not matched_records:
-        return f"No contacts found matching birthday: '{search_input}'"
+        return f"No contacts found matching birthday query: '{search_input}'"
 
     return format_contacts_table(matched_records)
 
