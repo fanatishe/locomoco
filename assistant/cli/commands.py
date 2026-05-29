@@ -88,6 +88,7 @@ commands_list = {
     "close": good_bye,
     "hello": lambda *_: "How can I help you?",
     "all": (contact_search, 0),
+    "help": (help_default, 0),
     "contact": (help_contact, 0),
     "contact add": (contact_add, 1),
     "contact change": (contact_change, 2),
