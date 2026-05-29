@@ -32,6 +32,9 @@ def dispatch(command_parts: list[str]) -> tuple:
         tuple: A tuple containing the handler function and a list of its arguments.
                If the minimum argument count is not met, returns the help handler for that command.
     """
+    if not command_parts:
+        return (lambda *_: "", [])
+
     commands_names = list(commands_list.keys())
     parts_to_check = []
     args = []

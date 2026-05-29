@@ -10,6 +10,7 @@ from assistant.cli.exceptions import GoodByeException
 
 @unexpected_exit
 def run_cli():
+    """Runs the main CLI loop (or takes data from pipe/file)"""
     generate_jarvis_interface()
     book = load_data()
 
