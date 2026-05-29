@@ -46,11 +46,13 @@ Command: {CYAN}contact add{RESET}
 Description: Create a new contact with a specific name.
 
 Usage:
-{CYAN}contact add <username>{RESET}
+{CYAN}contact add <username> [phone_number] [birthday]{RESET}
 
 Arguments:
 
     {CYAN}<username>{RESET} — The name of the new contact (wrap in quotes if it contains spaces).
+    {CYAN}<phone_number>{RESET} (optional) — The phone number to add (digits only, e.g., 1234567890).
+    {CYAN}<birthday>{RESET} (optional) — The birthday date (e.g., DD.MM.YYYY or YYYY-MM-DD).
 
 Example:
 contact add "John Doe"

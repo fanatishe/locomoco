@@ -1,23 +1,29 @@
 from assistant.contacts.record import Record
 from assistant.utils.decorators import input_error
-from assistant.utils.table_printer import format_contact, format_contacts_table
+from assistant.utils.table_printer import format_contacts_table
 from assistant.contacts.address_book import AddressBook
+from assistant.contacts.phone import Phone
+from assistant.utils.birthday_utils import normalize_date
 
 
 @input_error
-def contact_add(args, book):
+def contact_add(args, book: AddressBook):
     try:
-        name, phone, *_ = args
+        name, phone, *extra_args = args
     except ValueError:
         raise ValueError("Give me name and phone please")
 
-    record = book.find(name)
-
-    if record is None:
+    if name in book.data:
+        record = book.data[name]
+    else:
         record = Record(name)
         book.add_record(record)
 
     record.add_phone(phone)
+
+    if extra_args:
+        standard_birthday = normalize_date(extra_args[0])
+        record.set_birthday(standard_birthday)
 
     return "Contact added."
 
@@ -32,22 +38,23 @@ def contact_delete(*args):
 
 @input_error
 def contact_search(args, book: AddressBook) -> str:
-    if not book.data:
-        return "No contacts."
-    return format_contacts_table(list(book.data.values()))
+    # If no arguments are passed, show all contacts
+    if not args or not args[0].strip():
+        if not book.data:
+            return "No contacts found."
+        return format_contacts_table(list(book.data.values()))
 
+    query = args[0].lower()
+    matched_records = []
 
-@input_error
-def contact_search_name(args, book: AddressBook) -> str:
-    try:
-        name, *_ = args
-    except ValueError:
-        raise ValueError("Give me name please")
+    for name, record in book.data.items():
+        if query in name.lower():
+            matched_records.append(record)
 
-    record = book.find(name)
-    if record is None:
-        raise ValueError(f"Contact '{name}' not found.")
-    return format_contact(record)
+    if not matched_records:
+        return f"No contacts found matching username: '{args[0]}'"
+
+    return format_contacts_table(matched_records)
 
 
 def contact_phone_add(*args):
@@ -64,7 +71,28 @@ def contact_phone_delete(*args):
 
 @input_error
 def contact_phone_search(args, book: AddressBook) -> str:
-    return "Command 'contact_phone_search' TO BE IMPLEMENTED"
+    if not args:
+        raise ValueError("Give me a phone number to search for please")
+
+    # Strip everything except digits from the search query
+    query_digits = Phone.get_num(args[0])
+    if not query_digits:
+        raise ValueError("Search query must contain digits.")
+
+    matched_records = []
+
+    for record in book.data.values():
+        for phone_obj in record.phones:
+            # Strip formatting from stored phone number to check raw digits
+            stored_digits = Phone.get_num(phone_obj.value)
+            if query_digits in stored_digits:
+                matched_records.append(record)
+                break  # Avoid adding the same contact twice if multiple phones match
+
+    if not matched_records:
+        return f"No contacts found matching phone number: '{args[0]}'"
+
+    return format_contacts_table(matched_records)
 
 
 @input_error
@@ -92,24 +120,108 @@ def contact_email_delete(*args):
     return "Command 'contact_email_delete' TO BE IMPLEMENTED"
 
 
-def contact_email_search(*args):
-    return "Command 'contact_email_search' TO BE IMPLEMENTED"
+@input_error
+def contact_email_search(args, book: AddressBook) -> str:
+    if not args:
+        raise ValueError("Give me an email keyword to search for please")
+
+    query = args[0].lower()
+    matched_records = []
+
+    for record in book.data.values():
+        for email_obj in record.emails:
+            if query in email_obj.value.lower():
+                matched_records.append(record)
+                break
+
+    if not matched_records:
+        return f"No contacts found matching email: '{args[0]}'"
+
+    return format_contacts_table(matched_records)
 
 
-def contact_birthday_set(*args):
-    return "Command 'contact_birthday_set' TO BE IMPLEMENTED"
+@input_error
+def contact_birthday_set(args, book: AddressBook) -> str:
+    try:
+        name, date_str, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and birthday date please")
+
+    if name not in book.data:
+        raise KeyError()  # Triggers contact not found error decoration
+
+    record = book.data[name]
+    standard_birthday = normalize_date(date_str)
+    record.set_birthday(standard_birthday)
+
+    return f"Birthday set to {standard_birthday} for {name}."
 
 
-def contact_birthday_change(*args):
-    return "Command 'contact_birthday_change' TO BE IMPLEMENTED"
+@input_error
+def contact_birthday_change(args, book: AddressBook) -> str:
+    # Setting and changing share identical mechanics under the hood
+    try:
+        name, new_date_str, *_ = args
+    except ValueError:
+        raise ValueError("Give me name and the new birthday date please")
+
+    if name not in book.data:
+        raise KeyError()
+
+    record = book.data[name]
+    standard_birthday = normalize_date(new_date_str)
+    record.set_birthday(standard_birthday)
+
+    return f"Birthday updated to {standard_birthday} for {name}."
 
 
-def contact_birthday_delete(*args):
-    return "Command 'contact_birthday_delete' TO BE IMPLEMENTED"
+@input_error
+def contact_birthday_delete(args, book: AddressBook) -> str:
+    if not args:
+        raise ValueError("Give me a contact name please")
+
+    name = args[0]
+    if name not in book.data:
+        raise KeyError()
+
+    record = book.data[name]
+    if not getattr(record, "birthday", None):
+        return f"{name} does not have a birthday set."
+
+    record.birthday = None
+    return f"Birthday removed for {name}."
 
 
-def contact_birthday_search(*args):
-    return "Command 'contact_birthday_search' TO BE IMPLEMENTED"
+@input_error
+def contact_birthday_search(args, book: AddressBook) -> str:
+    if not args:
+        raise ValueError("Give me a date or search term to look for please")
+
+    search_input = args[0].strip()
+    matched_records = []
+
+    # Case A: User passes a fully qualified target date string to find matching contacts
+    try:
+        target_date = normalize_date(search_input)
+        for record in book.data.values():
+            if (
+                getattr(record, "birthday", None)
+                and str(record.birthday) == target_date
+            ):
+                matched_records.append(record)
+
+    # Case B: User passes a partial substring match scenario (e.g. searching just a month ".05." or year "1990")
+    except ValueError:
+        query = search_input.lower()
+        for record in book.data.values():
+            if getattr(record, "birthday", None):
+                if query in str(record.birthday).lower():
+                    matched_records.append(record)
+
+    if not matched_records:
+        return f"No contacts found matching birthday: '{search_input}'"
+
+    return format_contacts_table(matched_records)
 
 
 @input_error
@@ -117,10 +229,6 @@ def show_all(args, book: AddressBook) -> str:
     if not book.data:
         return "No contacts."
     return format_contacts_table(list(book.data.values()))
-
-@input_error
-def search(query: str, book: AddressBook) -> Record:
-    return book.find(query)
 
 
 def contact_address_set(args, book: AddressBook):
@@ -147,5 +255,19 @@ def contact_address_delete(*args):
     return "Command 'contact_address_delete' TO BE IMPLEMENTED"
 
 
-def contact_address_search(*args):
-    return "Command 'contact_address_search' TO BE IMPLEMENTED"
+@input_error
+def contact_address_search(args, book: AddressBook) -> str:
+    if not args:
+        raise ValueError("Give me an address keyword to search for please")
+
+    query = " ".join(args).lower()
+    matched_records = []
+
+    for record in book.data.values():
+        if record.address and query in record.address.value.lower():
+            matched_records.append(record)
+
+    if not matched_records:
+        return f"No contacts found matching address: '{' '.join(args)}'"
+
+    return format_contacts_table(matched_records)
