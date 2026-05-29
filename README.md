@@ -52,24 +52,24 @@ In this mode, all visual UI elements (like the boot animation and interactive au
 
 ### 1. Running from a File
 You can write a list of commands in a text file (e.g., `commands.txt`):
-`text
+```text
 help
 contact add Alice 0501234567
 contact add Bob 0671234567
 all
 exit
-`
+```
 
 Then, feed the file into the application using input redirection:
-`bash
+```bash
 python main.py < commands.txt
-`
+```
 
 ### 2. Running via Pipe
 You can also pipe single or multiple commands directly into the assistant from your terminal:
-`bash
+```bash
 echo "contact search Alice" | python main.py
-`
+```
 
 ## Command Reference
 
