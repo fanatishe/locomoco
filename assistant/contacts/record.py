@@ -22,7 +22,12 @@ class Record:
         self.birthday = None
 
     def add_phone(self, phone: str):
-        self.phones.append(Phone(phone))
+        new_phone = Phone(phone)
+        if any(p.value == new_phone.value for p in self.phones):
+            raise ValueError(
+                f"Phone number '{new_phone.value}' already exists for {self.name.value}."
+            )
+        self.phones.append(new_phone)
 
     def set_address(self, address: str):
         self.address = Address(address)
@@ -31,6 +36,12 @@ class Record:
         self.note = Note(note)
 
     def add_email(self, email: str):
+        new_email = Email(email)
+        if any(e.value.lower() == new_email.value.lower() for e in self.emails):
+            raise ValueError(
+                f"Email '{new_email.value}' already exists for {self.name.value}."
+            )
+        self.emails.append(new_email)
         self.emails.append(Email(email))
 
     def set_birthday(self, birthday_str: str):
