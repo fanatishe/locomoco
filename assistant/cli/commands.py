@@ -111,7 +111,7 @@ commands_list = {
     "contact birthday": (help_contact_birthday, 0),
     "contact birthday set": (contact_birthday_set, 2),
     "contact birthday change": (contact_birthday_change, 2),
-    "contact birthday delete": (contact_birthday_delete, 2),
+    "contact birthday delete": (contact_birthday_delete, 1),
     "contact birthday search": (contact_birthday_search, 1),
     "contact address": (help_contact_address, 0),
     "contact address set": (contact_address_set, 2),
