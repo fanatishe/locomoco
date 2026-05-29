@@ -80,22 +80,22 @@ def contact_search(args, book: Book) -> str:
         if query in name.lower():
             matched_records.append(record)
             continue
-            
+
         # Check Phones
         if any(query in phone.value for phone in record.phones):
             matched_records.append(record)
             continue
-            
+
         # Check Emails
         if any(query in email.value.lower() for email in record.emails):
             matched_records.append(record)
             continue
-            
+
         # Check Address
         if record.address and query in record.address.value.lower():
             matched_records.append(record)
             continue
-            
+
         # Check Birthday
         if record.birthday and query in str(record.birthday.value).lower():
             matched_records.append(record)
@@ -373,6 +373,7 @@ def show_all(args, book: Book) -> str:
     return format_contacts_table(list(book.addressbook.data.values()))
 
 
+@input_error
 def contact_address_set(args, book: Book):
     try:
         name, *parts = args
