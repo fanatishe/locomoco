@@ -22,7 +22,7 @@ def contact_add(args, book: Book):
     record.add_phone(phone)
 
     if extra_args:
-        standard_birthday = normalize_date(extra_args[0])
+        standard_birthday = normalize_date(extra_args[0]).strftime("%d.%m.%Y")
         record.set_birthday(standard_birthday)
 
     return "Contact added."
@@ -151,7 +151,7 @@ def contact_birthday_set(args, book: Book) -> str:
         raise KeyError()  # Triggers contact not found error decoration
 
     record = book.addressbook.data[name]
-    standard_birthday = normalize_date(date_str)
+    standard_birthday = normalize_date(date_str).strftime("%d.%m.%Y")
     record.set_birthday(standard_birthday)
 
     return f"Birthday set to {standard_birthday} for {name}."
@@ -169,7 +169,7 @@ def contact_birthday_change(args, book: Book) -> str:
         raise KeyError()
 
     record = book.addressbook.data[name]
-    standard_birthday = normalize_date(new_date_str)
+    standard_birthday = normalize_date(new_date_str).strftime("%d.%m.%Y")
     record.set_birthday(standard_birthday)
 
     return f"Birthday updated to {standard_birthday} for {name}."
