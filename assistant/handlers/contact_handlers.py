@@ -11,20 +11,26 @@ from assistant.utils.birthday_utils import normalize_date
 @input_error
 def contact_add(args, book: Book):
     try:
-        name, phone, *extra_args = args
+        name, *extra_args = args
     except ValueError:
-        raise ValueError("Give me name and phone please")
+        raise ValueError("Give me name please")
 
+    # Retrieve existing contact or create a new one
     if name in book.addressbook.data:
         record = book.addressbook.data[name]
     else:
         record = Record(name)
         book.addressbook.add_record(record)
 
-    record.add_phone(phone)
+    # Handle the optional phone number
+    if len(args) > 1:
+        phone = args[1]
+        record.add_phone(phone)
 
-    if extra_args:
-        standard_birthday = normalize_date(extra_args[0]).strftime("%d.%m.%Y")
+    # Handle the optional birthday
+    if len(args) > 2:
+        birthday_str = args[2]
+        standard_birthday = normalize_date(birthday_str).strftime("%d.%m.%Y")
         record.set_birthday(standard_birthday)
 
     return "Contact added."
