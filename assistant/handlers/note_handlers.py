@@ -1,5 +1,6 @@
 from assistant.contacts.address_book import Book
 from assistant.utils.decorators import input_error
+from assistant.utils.table_printer import format_notes_table
 
 
 @input_error
@@ -56,13 +57,14 @@ def note_search(args, book: Book):
 
     for note_id, note_info in book.notebook.data.items():
         if query is None or query in note_info["text"].lower():
-            tags_str = ", ".join(note_info["tags"]) if note_info["tags"] else "no tags"
-            results.append(f"ID {note_id} [{tags_str}]: {note_info['text']}")
+            results.append(
+                {"id": note_id, "text": note_info["text"], "tags": note_info["tags"]}
+            )
 
     if not results and query:
         return f"No notes found matching: '{args[0]}'"
 
-    return "\n".join(results)
+    return format_notes_table(results)
 
 
 @input_error
@@ -132,9 +134,40 @@ def note_tag_search(args, book: Book):
 
     for note_id, note_info in book.notebook.data.items():
         if query_tag in note_info["tags"]:
-            tags_str = ", ".join(note_info["tags"])
-            results.append(f"ID {note_id} [{tags_str}]: {note_info['text']}")
+            results.append(
+                {"id": note_id, "text": note_info["text"], "tags": note_info["tags"]}
+            )
 
     if not results:
         return f"No notes found with tag: '{args[0]}'"
-    return "\n".join(results)
+
+    return format_notes_table(results)
+
+
+@input_error
+def note_tag_sort(args, book: Book) -> str:
+    """
+    Sorts all notes by their tags alphabetically.
+    Notes without tags are placed at the bottom of the list.
+
+    Args:
+        args (list[str]): Command arguments (none expected for this command).
+        book (Book): The root application state.
+
+    Returns:
+        str: A formatted string of sorted notes.
+    """
+    if not book.notebook.data:
+        return "No notes found."
+
+    notes_list = []
+    for note_id, note_info in book.notebook.data.items():
+        sorted_tags = sorted(note_info.get("tags", []))
+        notes_list.append(
+            {"id": note_id, "text": note_info["text"], "tags": sorted_tags}
+        )
+
+    # Sort by presence of tags first, then alphabetically by tags
+    notes_list.sort(key=lambda x: (0 if x["tags"] else 1, ", ".join(x["tags"])))
+
+    return format_notes_table(notes_list)
