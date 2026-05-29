@@ -1,5 +1,5 @@
 from assistant.contacts.record import Record
-from assistant.utils.decorators import input_error
+from assistant.cli.decorators import input_error
 from assistant.utils.table_printer import format_contacts_table
 from assistant.contacts.address_book import Book
 from assistant.contacts.phone import Phone
