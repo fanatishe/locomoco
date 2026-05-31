@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from assistant.contacts.address_book import Book
+from assistant.contacts.book import Book
 from assistant.handlers.contact_handlers import (
     contact_add,
     contact_search,

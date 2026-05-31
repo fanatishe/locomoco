@@ -1,4 +1,4 @@
-from assistant.contacts.address_book import Book
+from assistant.contacts.book import Book
 from assistant.cli.decorators import input_error
 from assistant.utils.table_printer import format_notes_table
 

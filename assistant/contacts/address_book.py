@@ -72,39 +72,3 @@ class AddressBook(UserDict[str, Record]):
                 upcoming.append(record)
 
         return upcoming
-
-
-class Notebook(UserDict):
-    """
-    Holds standalone text notes separate from contacts, utilizing an auto-incrementing ID.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.current_id = 1
-
-    def add_note(self, text: str) -> int:
-        """
-        Creates a new note with a unique integer ID.
-
-        Args:
-            text (str): The body text of the note.
-
-        Returns:
-            int: The unique identifier assigned to the note.
-        """
-        note_id = self.current_id
-        self.data[note_id] = {"text": text, "tags": []}
-        self.current_id += 1
-        return note_id
-
-
-class Book:
-    """
-    The root application state object unifying both sub-stores (AddressBook and Notebook).
-    This single object is what gets pickled and saved to the hard drive.
-    """
-
-    def __init__(self):
-        self.addressbook = AddressBook()
-        self.notebook = Notebook()
