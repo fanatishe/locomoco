@@ -1,6 +1,6 @@
 import pickle
 from pathlib import Path
-from assistant.contacts.address_book import Book
+from assistant.contacts.book import Book
 
 # Using Path.home() ensures the file is saved in the user's home directory
 # (e.g., C:\Users\Username or /home/username) fulfilling the project requirement.
