@@ -1,5 +1,7 @@
 from collections import UserDict
 from datetime import datetime, timedelta
+
+from assistant.utils.birthday_utils import birthday_in_year
 from .record import Record
 
 
@@ -51,21 +53,10 @@ class AddressBook(UserDict[str, Record]):
             # Extract day and month from the normalized string format DD.MM.YYYY
             b_day, b_month, _ = map(int, record.birthday.value.split("."))
 
-            # Formulate this year's birthday date
-            try:
-                birthday_this_year = datetime(today.year, b_month, b_day).date()
-            except ValueError:
-                # Handle leap year edge cases (e.g., Feb 29 in a non-leap year)
-                birthday_this_year = datetime(today.year, b_month, b_day - 1).date()
-
-            # If the birthday has already passed this year, look at next year
+            # Build this year's birthday; roll over to next year if already passed
+            birthday_this_year = birthday_in_year(today.year, b_month, b_day)
             if birthday_this_year < today:
-                try:
-                    birthday_this_year = datetime(today.year + 1, b_month, b_day).date()
-                except ValueError:
-                    birthday_this_year = datetime(
-                        today.year + 1, b_month, b_day - 1
-                    ).date()
+                birthday_this_year = birthday_in_year(today.year + 1, b_month, b_day)
 
             # Check if the adjusted birthday falls within the requested time frame
             if today <= birthday_this_year <= target_date:
