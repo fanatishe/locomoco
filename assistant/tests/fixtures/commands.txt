@@ -1,44 +1,41 @@
 hello
 
-# --- Contacts General ---
 contact add Alice 0501234567 15.05.1990
 contact add Bob 0671234567
 contact change Alice Alicia
 contact search Ali
 contact search
 
-# --- Contact Phones ---
 contact phone add Alicia 0931234567
 contact phone change Alicia 0501234567 0509876543
 contact phone search 0671234567
 contact phone delete Alicia 0931234567
 
-# --- Contact Emails ---
 contact email add Alicia alicia@example.com
 contact email change Alicia alicia@example.com alicia.new@example.com
 contact email search alicia
 contact email delete Alicia alicia.new@example.com
 
-# --- Contact Birthdays ---
 contact birthday set Bob 20.08.1995
 contact birthday change Bob 21.08.1995
 contact birthday search 7
 contact birthday delete Bob
 
-# --- Contact Addresses ---
 contact address set Alicia Kyiv, Khreshchatyk 1
 contact address change Alicia Kyiv, Khreshchatyk 2
 contact address search Kyiv
 contact address delete Alicia
 
-# --- Notes ---
+contact add Bogdan 0501234567 15.06.1990
+contact add Sergiy 0501234567 05.06.1991
+contact add Valeriy 0501234567 16.06.1992
+
 note add Buy milk and bread
 note add Call the doctor tomorrow
 note change 1 Buy milk, bread, and eggs
 note search bread
 note search
 
-# --- Note Tags ---
 note tag add 1 groceries
 note tag add 2 urgent
 note tag add 2 health
@@ -48,7 +45,6 @@ note tag search groceries
 note tag search
 note tag sort
 
-# --- Cleanup and Terminate ---
 contact delete Bob
 note delete 2
 all
