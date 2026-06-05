@@ -44,3 +44,5 @@ def load_data(filename_str: str = STORAGE_FILE) -> Book:
     except (FileNotFoundError, pickle.UnpicklingError, EOFError):
         # Graceful fallback: return a fresh book if no history exists
         return Book()
+    except Exception:
+        return Book()
